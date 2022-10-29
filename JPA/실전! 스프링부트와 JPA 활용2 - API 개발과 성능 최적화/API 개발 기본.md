@@ -46,3 +46,51 @@ public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest
 이처럼 DTO를 사용하게 되면 API SPEC이 변경되어도 Entity에 변경이 발생하지 않는다.
 
 또한, DTO를 사용하는 것이 확인하기도 명확하며 편리하다.
+
+### 회원 조회 API
+
+Entity를 직접 노출하게 되면 Entity에 있는 모든 정보들이 다 노출이 된다.
+
+`@JsonIgnore` 어노테이션으로 막을 순 있지만 다른 문제점들이 많다.
+
+```java
+@GetMapping("/api/v1/members")
+public List<Member> membersV1() {
+    return memberService.findMembers();
+}
+```
+
+- Entity로는 다양한 API SPEC에 맞출 수 없다.
+- Entity에 표현 계층을 위한 로직이 포함되어 있는 것은 좋지 않다.
+- Entity 변경 시 API SPEC이 변경된다.
+- 컬렉션을 직접 반환하면 향후 API SPEC을 변경하기 어렵다. → 별도의 Result 클래스를 생성하여 해결해야 함
+
+따라서, 별도의 DTO로 변환하여 API 응답을 해야 한다!!
+
+```java
+@GetMapping("/api/v2/members")
+public Result<?> memberV2() {
+    List<Member> findMembers = memberService.findMembers();
+    List<MemberDto> collect = findMembers.stream()
+            .map(m -> new MemberDto(m.getName()))
+            .collect(Collectors.toList());
+
+    return new Result(collect);
+}
+
+@Data
+@AllArgsConstructor
+static class Result<T> {
+    private T data;
+}
+
+@Data
+@AllArgsConstructor
+static class MemberDto {
+    private String name;
+}
+```
+
+Entity를 DTO로 변환하는 수고로움이 생기지만, API SPEC과 Entity는 서로의 변경에 영향이 없어진다.
+
+API를 만들 때에는 절대 Entity를 노출시키지 않고 무조건 DTO를 사용해야 한다.

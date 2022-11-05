@@ -37,3 +37,57 @@ public List<Order> ordersV1() {
 하지만, 이조차도 쓸모없는 데이터가 너무 많다.
 
 API Spec에는 꼭 필요한 데이터만 들어있어야 한다.
+
+### 간단한 주문 조회 V2 : 엔티티를 DTO로 변환
+
+```java
+@Data
+static classSimpleOrderDto{
+    privateLongorderId;
+    privateStringname;
+    privateLocalDateTimeorderDate;
+    privateOrderStatusorderStatus;
+    privateAddressaddress;
+
+    public SimpleOrderDto(Orderorder) {
+        this.orderId =order.getId();
+        this.name =order.getMember().getName();// LAZY초기화
+        this.orderDate =order.getOrderDate();
+        this.orderStatus =order.getStatus();
+        this.address =order.getDelivery().getAddress();// LAZY초기화
+    }
+}
+```
+
+```java
+@GetMapping("/api/v2/simple-orders")
+public List<SimpleOrderDto> ordersV2() {
+    // ORDER 2개
+    // N + 1 -> 1 +회원 N +배송 N
+    List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+
+    List<SimpleOrderDto> result = orders.stream()
+            .map(SimpleOrderDto::new)
+            .collect(Collectors.toList());
+
+    return result;
+}
+```
+
+위 경우에서는 Order, Member, Delivery, 총 3개의 테이블을 참조하게 된다.
+
+`orderRepository.findAllByString()` 을 통해 2개의 Order를 발견하게 되고,
+
+이를 stream 돌면서 각 Order에 필요한 Member, Delivery를 그때그때(`LAZY`) 채워넣게 된다.
+
+따라서, 쿼리가 너무 많이 나가게 된다. (N+1 문제)
+
+너무 많은 쿼리는 성능 상 좋지 않다.
+
+그렇다면 fetchType을 `EAGER` 로 바꾸게 되면 어떻게 될까?
+
+`EAGER` 로 바꾸고 실행한다면 한 번에 모든 것을 가져오려고 하다보니 이 또한 많은 쿼리와 성능이 좋지 못한 쿼리가 발생한다.
+
+또한, `EAGER` 를 사용한다면 쿼리를 예측하기 어려워진다.
+
+따라서, 이런 문제를 해결하기 위해서는 `Fetch Join`을 사용해야 한다!!!

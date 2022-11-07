@@ -91,3 +91,25 @@ public List<SimpleOrderDto> ordersV2() {
 또한, `EAGER` 를 사용한다면 쿼리를 예측하기 어려워진다.
 
 따라서, 이런 문제를 해결하기 위해서는 `Fetch Join`을 사용해야 한다!!!
+
+### 간단한 주문 조회 V3 : 엔티티를 DTO로 변환 - 페치 조인 최적화
+
+실무의 대부분 성능 문제는 N+1 문제로부터 발생한다.
+
+`fetch join`은 필요한 객체 그래프를 한번에 다 쿼리해올때 사용한다.
+
+`fetch join`을 제대로 이해하고 사용하면 90%의 성능 문제는 해결할 수 있다.
+
+```java
+@GetMapping("/api/v3/simple-orders")
+public List<SimpleOrderDto> ordersV3() {
+    List<Order> orders = orderRepository.findAllWithMemberDelivery();
+    List<SimpleOrderDto> result = orders.stream()
+            .map(SimpleOrderDto::new)
+            .collect(Collectors.toList());
+
+    return result;
+}
+```
+
+페치 조인을 통해 V2에서 발생하던 N+1 문제(필요한 Member와 Delivery를 Lazy 로딩으로 인해 계속 쿼리가 나가는 문제)를 해결!!

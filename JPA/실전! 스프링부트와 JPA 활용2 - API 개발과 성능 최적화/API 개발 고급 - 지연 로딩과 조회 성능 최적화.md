@@ -113,3 +113,52 @@ public List<SimpleOrderDto> ordersV3() {
 ```
 
 페치 조인을 통해 V2에서 발생하던 N+1 문제(필요한 Member와 Delivery를 Lazy 로딩으로 인해 계속 쿼리가 나가는 문제)를 해결!!
+
+### 간단한 주문 조회 V4 : JPA에서 DTO로 바로 조회
+
+```java
+@GetMapping("/api/v4/simple-orders")
+public List<OrderSimpleQueryDto> ordersV4() {
+    return orderSimpleQueryRepository.findOrderDtos();
+}
+```
+
+```java
+@Data
+public class OrderSimpleQueryDto{
+    private Long orderId;
+    private String name;
+    private LocalDateTime orderDate;
+    private OrderStatus orderStatus;
+    private Address address;
+
+    public OrderSimpleQueryDto(Long orderId,String name,LocalDateTime orderDate,OrderStatus orderStatus,Address address) {
+        this.orderId = orderId;
+        this.name = name;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+        this.address = address;
+    }
+}
+```
+
+V3 페치 조인을 사용할 때는 페치 조인한 모든 Entity들의 정보를 다 가져왔다.
+
+지금 V4는 필요한 데이터만 쏙쏙 가져온다.
+
+이로써 애플리케이션 네트워크 용량 최적화가 된다. (하지만, 생각보다 미비)
+
+하지만, API 스펙에 맞게 데이터를 쿼리하는 것은 API 스펙 또는 화면에 의해 리포지토리를 변경해야 하므로 순수한 Entity를 조회하거나 객체 그래프를 조회하는 리포지토리의 목적에 벗어난다.
+
+따라서, 이같은 API 스펙에 최적화된 용도가 필요할 땐 리포지토리 하위에 별도의 패키지를 만든다.
+
+실무에서는 많이 복잡한 쿼리와 DTO를 뽑아야할 때가 많은데 이때의 유지보수성을 위해 분리한다.
+
+Entity를 조회하고 DTO로 변환하는 방법과 바로 DTO를 조회하는 방법, 두 가지 모두 트레이드오프가 있다.
+
+따라서, 쿼리 방색 선택 권장 순서는 다음과 같다.
+
+1. 우선 Entity를 DTO로 변환하는 방법을 선택한다.
+2. 필요하면 페치 조인으로 성능을 최적화한다. → 대부분의 성능 이슈가 해결된다.
+3. 그래도 해결 안되면 DTO로 직접 조회하는 방법을 사용한다.
+4. 최후의 방법은 JPA가 제공하는 네이티브 SQL이나 스프링 JDBC Template를 사용해서 SQL을 직접 사용한다.

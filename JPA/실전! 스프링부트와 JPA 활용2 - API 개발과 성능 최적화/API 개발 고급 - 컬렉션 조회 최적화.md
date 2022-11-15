@@ -77,3 +77,60 @@ DTO로 변환했을 때 또 그 안에 Entity가 들어있다면 해당 Entity�
 왜냐하면 이전에도 그랬듯이 Entity가 API에 직접 노출된다면 서로의 변경에 취약해지기 때문이다.
 
 하지만, V2도 실행해보면 컬렉션이라는 점과 지연 로딩때문에 엄청 많은 양의 쿼리가 발생한다.
+
+### 주문 조회 V3 : 엔티티를 DTO로 변환 - 페치 조인 최적화
+
+1대다 관계(컬렉션)를 조인하게 되면 데이터베이스 내에서 결과가 뻥튀기가 된다.
+
+```java
+public List<Order> findAllWithItem() {
+    return em.createQuery(
+            "select o from Order o" +
+                    " join fetch o.member m" +
+                    " join fetch o.delivery d" +
+                    " join fetch o.orderItems oi" +
+                    " join fetch oi.item i",Order.class)
+            .getResultList();
+}
+```
+
+따라서, 위와 같이 페치 조인을 사용하게 되면 중복된 부풀려진 데이터가 결과로 반환된다.
+
+또한, 반환된 데이터들 중 id가 같은 데이터들은 reference 주소까지 동일하다.
+
+JPA에서는 id값이 같으면 같은 데이터로 처리하기 때문이다.
+
+그렇다면 어떻게 해결해야 할까?
+
+여기서 `distinct` 키워드를 사용할 수 있다.
+
+```java
+public List<Order> findAllWithItem() {
+    return em.createQuery(
+            "select distinct o from Order o" +
+                    " join fetch o.member m" +
+                    " join fetch o.delivery d" +
+                    " join fetch o.orderItems oi" +
+                    " join fetch oi.item i",Order.class)
+            .getResultList();
+}
+```
+
+SQL에서 사용되는 `distinct` 키워드는 row 내의 모든 데이터가 동일해야만 중복을 제거한다.
+
+JPA의 `distinct` 키워드는 두 가지 기능을 제공한다.
+
+- DB SQL에 distinct 키워드를 날려주고,
+- 애플리케이션 단에서 Root Entity가 중복인 경우에 걸러서 컬렉션에 담아준다.
+
+이로써 SQL이 1번만 실행된다.
+
+컬렉션 페치 조인의 단점
+
+- 페이징
+
+1대다 관계에서 페치 조인을 사용하게 되면 페이징이 불가능하다.
+
+JPA의 구현체인 하이버네이트는 경고 로그를 남기면서 모든 데이터를 DB에서 불러와 메모리에서 페이징을 진행한다. → 매우 위험 (Out of Memory 위험)
+
+또한, 컬렉션(1대다) 페치 조인은 1개만 사용할 수 있다. 컬렉션 둘 이상에 페치 조인을 사용하면 데이터가 부정합하게 조회될 수 있다.

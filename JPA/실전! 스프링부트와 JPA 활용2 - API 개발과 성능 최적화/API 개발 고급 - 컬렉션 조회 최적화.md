@@ -134,3 +134,39 @@ JPA의 `distinct` 키워드는 두 가지 기능을 제공한다.
 JPA의 구현체인 하이버네이트는 경고 로그를 남기면서 모든 데이터를 DB에서 불러와 메모리에서 페이징을 진행한다. → 매우 위험 (Out of Memory 위험)
 
 또한, 컬렉션(1대다) 페치 조인은 1개만 사용할 수 있다. 컬렉션 둘 이상에 페치 조인을 사용하면 데이터가 부정합하게 조회될 수 있다.
+
+### 주문 조회 V3.1 : 엔티티를 DTO로 변환 - 페이징과 한계 돌파
+
+컬렉션을 페치 조인하면 페이징이 불가능하다.
+
+이유 : 일대다 관계를 조인한다면 데이터가 예측할 수 없이 증가하기 때문이다. 하지만, 데이터는 다(N)을 기준으로 row가 생성되기 때문이다.
+
+1. ToOne(OneToOne, ManyToOne) 관계는 모두 페치 조인을 사용한다.
+
+   ```java
+   public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+       return em.createQuery(
+               "select o from Order o" +
+                       " join fetch o.member m" +
+                       " join fetch o.delivery d",Order.class)
+               .setFirstResult(offset)
+               .setMaxResults(limit)
+               .getResultList();
+   }
+   ```
+
+2. 컬렉션은 지연 로딩을 사용한다.
+3. 지연 로딩 성능 최적화를 위해 `hibernate.default_batch_fetch_size`, `@BatchSize` 를 적용한다.
+   1. `default_batch_fetch_size: 100`
+
+`hibernate.default_batch_fetch_size` 를 사용하면 기존 N+1 문제가 발생하던 부분이 SQL에서 where-in 쿼리를 통해 한번에 데이터를 가져오게 된다.
+
+이를 통해 쿼리 수를 매우 줄일 수 있다.
+
+V3 : 쿼리는 더 적게 나가지만 애플리케이션으로 전송되는 데이터의 용량은 더 많다.
+
+V3.1 : 쿼리는 좀 더 나가지만 애플리케이션으로 전송되는 데이터의 용량이 더 적다.
+
+`default_batch_fetch_size` 는 100~1000 사이의 적당한 사이즈를 선택해야 한다.
+
+1000으로 잡으면 한번에 1000개를 DB에서 애플리케이션에 불러오므로 DB에 순간 부하가 증가할 수 있으므로 적당한 값을 잘 설정해야 한다.

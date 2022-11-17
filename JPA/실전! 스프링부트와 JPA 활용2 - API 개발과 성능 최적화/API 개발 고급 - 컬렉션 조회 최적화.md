@@ -170,3 +170,43 @@ V3.1 : 쿼리는 좀 더 나가지만 애플리케이션으로 전송되는 데�
 `default_batch_fetch_size` 는 100~1000 사이의 적당한 사이즈를 선택해야 한다.
 
 1000으로 잡으면 한번에 1000개를 DB에서 애플리케이션에 불러오므로 DB에 순간 부하가 증가할 수 있으므로 적당한 값을 잘 설정해야 한다.
+
+### 주문 조회 V4 : JPA에서 DTO 직접 조회
+
+JPA에서 바로 DTO에 값을 채워 조회하는 메서드는 화면과 직접적으로 연관된 메서드인 경우가 많다.
+
+따라서, 일반적으로 사용하는 리포지토리에 메서드를 만들지않고 따로 분리하여 만든다.
+
+이유 : 화면과 연관된 메서드와 비즈니스 로직과 연관된 메서드의 라이프사이클이 다르기 때문
+
+DTO를 바로 조회하여도 루트 쿼리 1번에 컬렉션을 조회하기 위한 N번의 쿼리가 발생하게 된다.
+
+```java
+public List<OrderQueryDto> findOrderQueryDtos() {
+    List<OrderQueryDto> result = findOrders();
+    result.forEach(o-> {
+        List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId());
+        o.setOrderItems(orderItems);
+    });
+    return result;
+}
+
+private List<OrderItemQueryDto> findOrderItems(Long orderId) {
+    return em.createQuery(
+            "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                    " from OrderItem oi" +
+                    " join oi.item i" +
+                    " where oi.order.id =:orderId",OrderItemQueryDto.class)
+            .setParameter("orderId",orderId)
+            .getResultList();
+}
+
+private List<OrderQueryDto> findOrders() {
+    return em.createQuery(
+                    "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
+                            " from Order o" +
+                            " join o.member m" +
+                            " join o.delivery d",OrderQueryDto.class)
+            .getResultList();
+}
+```

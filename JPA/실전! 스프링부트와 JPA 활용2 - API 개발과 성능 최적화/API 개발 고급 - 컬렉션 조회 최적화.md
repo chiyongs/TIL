@@ -210,3 +210,43 @@ private List<OrderQueryDto> findOrders() {
             .getResultList();
 }
 ```
+
+### 주문 조회 V5 : JPA에서 DTO 직접 조회 - 컬렉션 조회 최적화
+
+컬렉션을 조회하기 위해 N번의 쿼리가 발생하던 것을 SQL의 where-in을 사용하여 1번의 쿼리로 한번에 다 가져온다.
+
+이를 통해 V4에 비해 쿼리가 적게 나간다.
+
+또한 Map을 사용해서 매칭 성능을 최적화했다. 시간 복잡도 O(1)### 주문 조회 V5 : JPA에서 DTO 직접 조회 - 컬렉션 조회 최적화
+
+컬렉션을 조회하기 위해 N번의 쿼리가 발생하던 것을 SQL의 where-in을 사용하여 1번의 쿼리로 한번에 다 가져온다.
+
+이를 통해 V4에 비해 쿼리가 적게 나간다.
+
+또한 Map을 사용해서 매칭 성능을 최적화했다. 시간 복잡도 O(1)
+
+```java
+public List<OrderQueryDto> findAllByDto_optimization() {
+    List<OrderQueryDto> result = findOrders();
+
+    Map<Long,List<OrderItemQueryDto>> orderItemMap = findOrderItemMap(toOrderIds(result));
+
+    result.forEach(o->o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+    return result;
+}
+
+private Map<Long,List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
+    List<OrderItemQueryDto> orderItems = em.createQuery(
+                    "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                            " from OrderItem oi" +
+                            " join oi.item i" +
+                            " where oi.order.id in:orderIds",OrderItemQueryDto.class)
+            .setParameter("orderIds",orderIds)
+            .getResultList();
+
+    Map<Long,List<OrderItemQueryDto>> orderItemMap = orderItems.stream()
+            .collect(Collectors.groupingBy(OrderItemQueryDto::getOrderId));
+    return orderItemMap;
+}
+```

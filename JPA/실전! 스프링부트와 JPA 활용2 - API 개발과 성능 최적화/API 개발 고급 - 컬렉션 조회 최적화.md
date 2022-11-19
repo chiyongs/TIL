@@ -250,3 +250,39 @@ private Map<Long,List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) 
     return orderItemMap;
 }
 ```
+
+### 주문 조회 V6 : JPA에서 DTO로 직접 조회, 플랫 데이터 최적화
+
+모든 테이블을 다 조인해서 한 방 쿼리로 모든 데이터를 가져온다.
+
+이러면 쿼리가 한번만 발생한다는 장점이 있지만, 페이징이 불가능하다는 단점을 가지고 있다.
+
+우리는 `OrderQueryDto` 라는 API 스펙으로 반환하려 했다.
+
+따라서, 변환 작업이 필요하다.
+
+stream을 사용해서 메모리상에서 변환작업을 진행한다.
+
+```java
+@GetMapping("/api/v6/orders")
+public List<OrderQueryDto> ordersV6() {
+    List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+    return flats.stream()
+            .collect(groupingBy(o-> new OrderQueryDto(o.getOrderId(),o.getName(),o.getOrderDate(),o.getOrderStatus(),o.getAddress()),
+mapping(o-> new OrderItemQueryDto(o.getOrderId(),o.getItemName(),o.getOrderPrice(),o.getCount()),toList())
+            )).entrySet().stream()
+            .map(e-> new OrderQueryDto(e.getKey().getOrderId(),e.getKey().getName(),e.getKey().getOrderDate(),e.getKey().getOrderStatus(),e.getKey().getAddress(),e.getValue()))
+            .collect(toList());
+}
+```
+
+하지만, 위와 같이 만들어도 우리가 원하는 중복되지 않은 데이터가 나오지 않고 조인 결과가 나오게 된다.
+
+이를 해결하기 위해서 `OrderQueryDto` 에 _`@EqualsAndHashCode_(of = "orderId")` 인 Lombok 어노테이션을 통해 orderId가 같을 시 같은 객체로 인식시켜주는 작업이 추가로 필요하다.
+
+> V6 정리
+
+쿼리는 한번이지만 조인으로 인해 중복데이터가 추가되므로 상황에 따라 더 느릴 수도 있다.
+
+또한, 애플리케이션에서 추가 작업이 크고 페이징이 불가능하다.

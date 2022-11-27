@@ -75,3 +75,36 @@ Microservice 아키텍처
 
 - SOA : 공통의 서비스를 ESB에 모아 사업 측면에서 공통 서비스 형식으로 서비스 제공
 - MSA : 각 독립된 서비스가 노출된 REST API를 사용
+
+### Spring Cloud
+
+- Spring Cloud Config Server : 중앙 통합 환경 설정 관리
+- Eureka(Naming Server)
+- Spring Cloud Gateway & Ribbon : 로드 밸런싱
+- FeignClient : Easier REST Clients
+- Zipkin Distributed Tracing, Netflix API gateway : 모니터링
+- Hystrix : Fault Tolerance
+
+## Service Discovery
+
+Eureka : MSA 안에서 각각의 서비스들이 다른 서비스들을 찾기 위한 전화번호부같은 역할
+
+먼저, 서버 인스턴스를 Spring Cloud Netflix Eureka에 등록해야 한다.
+
+`@EnableEurekaServer` : EurekaServer의 작업을 수행하도록 하는 어노테이션
+
+```yaml
+server:
+  port: 8761
+
+spring:
+  application:
+    name: discoveryservice
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+```
+
+`eureka.client.register-with-eureka,fetch-register` : Eureka 라이브러리가 포함된채 Spring Boot가 실행하게 되면 위 2가지 옵션이 true로 설정되어 Eureka Client도 수행하려한다. 하지만, 우리의 경우 Server의 역할만 담당하므로 false로 설정한다.

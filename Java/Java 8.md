@@ -57,3 +57,32 @@
 언어 설계자들이 자바에 함수형식을 추가하는 방법도 고려했지만 언어를 더 복잡하게 만들지 않기 위해 현재 방법을 선택했다.
 
 `@FunctionalInterface` : 함수형 인터페이스임을 가리키는 어노테이션, 실제로 함수형 인터페이스가 아니면 컴파일러가 에러를 발생시킨다.
+
+### 람다 활용 : 실행 어라운드 패턴
+
+실제 자원을 처리하는 코드를 설정과 정리 두 과정이 둘러싸는 형태
+
+```java
+public static String processFile() throws IOException {
+	try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+		return br.readLine();
+	}
+}
+```
+
+```java
+public interface BufferedReaderProcess {
+	String process(BufferedReader br) throws IOException;
+}
+
+public static String processFile(BufferedReaderProcess p) {
+	try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+		return p.process(br);
+	}
+}
+```
+
+```java
+String oneLine = processFile((BufferedReader br) -> br.readLine());
+String twoLines = processFile((BufferedReader br) -> br.readLine() + br.readLine());
+```

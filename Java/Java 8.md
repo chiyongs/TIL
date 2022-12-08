@@ -86,3 +86,26 @@ public static String processFile(BufferedReaderProcess p) {
 String oneLine = processFile((BufferedReader br) -> br.readLine());
 String twoLines = processFile((BufferedReader br) -> br.readLine() + br.readLine());
 ```
+
+## 함수형 인터페이스 사용
+
+함수형 인터페이스의 추상 메서드는 람다 표현식의 시그니처를 묘사한다.
+
+함수형 인터페이스의 추상 메서드 시그니처를 함수 디스크립터라고 한다.
+
+- Predicate<T> : 제네릭 형식 T의 객체를 인수로 받아 불린을 반환
+  - `boolean test(T t)` : T 형식의 객체를 사용하는 불린 표현식
+- Consumer<T> : 제네릭 형식 T 객체를 받아서 void를 반환
+  - `void accept(T t)` : T 형식의 객체를 인수로 받아서 어떤 동작을 수행하고 싶을 때
+  - forEach에 Consumer를 인자로 사용할 수 있음
+- Function<T, R>
+  - `R apply(T t)` : 제네릭 형식 T를 인수로 받아서 제니릭 형식 R 객체를 반환하는 추상 메서드
+  - 예) 사과의 무게 정보를 추출 or 문자열을 길이와 매핑
+
+예제
+
+- Predicate<List<String>> : (List<String> list) → list.isEmpty(), boolean
+- Supplier<Apple> : () → new Apple(10), () → T
+- Consumer<Apple> : (Apple a) → System.out.println(a.getWeight()), (T) → void
+- Function<String, Integer> or ToIntFunction<String> : (String s) → s.length(), T → R
+- Comparator<Apple> … : (int a, int b) → a \* b

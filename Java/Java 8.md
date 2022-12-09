@@ -109,3 +109,14 @@ String twoLines = processFile((BufferedReader br) -> br.readLine() + br.readLine
 - Consumer<Apple> : (Apple a) → System.out.println(a.getWeight()), (T) → void
 - Function<String, Integer> or ToIntFunction<String> : (String s) → s.length(), T → R
 - Comparator<Apple> … : (int a, int b) → a \* b
+
+## 람다의 지역 변수 사용
+
+람다 표현식에서는 익명 함수가 하는 것처럼 자유 변수를 활용할 수 있다.
+
+이것을 람다 캡처링이라고 한다.
+
+하지만, 지역 변수는 명시적으로 final로 선언되어 있어야 하거나 실질적으로 final로 선언된 변수와 똑같이 사용되어야 한다.
+
+> 이유 : 지역변수는 스택에 위치하기 때문에 값을 직접 제공하지 않고 복사본을 제공한다.
+> 따라서, 복사본의 값이 바뀌지 않아야 하므로 지역 변수에는 한 번만 값을 할당해야 한다.

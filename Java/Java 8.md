@@ -120,3 +120,26 @@ String twoLines = processFile((BufferedReader br) -> br.readLine() + br.readLine
 
 > 이유 : 지역변수는 스택에 위치하기 때문에 값을 직접 제공하지 않고 복사본을 제공한다.
 > 따라서, 복사본의 값이 바뀌지 않아야 하므로 지역 변수에는 한 번만 값을 할당해야 한다.
+
+## 메서드 레퍼런스
+
+```java
+// 기존 코드
+inventory.sort((Apple a1, Apple a2) ->
+								a1.getWeight().compareTo(a2.getWeight()));
+
+// 메서드 레퍼런스 활용 코드 Apple::getWeight
+inventory.sort(comparing(Apple::getWeight));
+```
+
+메서드 레퍼런스는 특정 메서드만을 호출하는 람다의 축약형이라고 생각할 수 있다.
+
+- 명시적으로 메서드명을 참조함으로써 가독성 향샹
+- 메서드명 앞에 구분자(::)를 붙이는 방식으로 활용
+- Apple::getWeight == (Apple a) → a.getWeight()
+
+예시
+
+- () → Thread.currentThread().dumpStack() == Thread.currentThread::dumpStack
+- (str, i) → str.substring(i) == String::substring
+- (String s) → System.out.println(s) == System.out::println

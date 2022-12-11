@@ -143,3 +143,21 @@ inventory.sort(comparing(Apple::getWeight));
 - () → Thread.currentThread().dumpStack() == Thread.currentThread::dumpStack
 - (str, i) → str.substring(i) == String::substring
 - (String s) → System.out.println(s) == System.out::println
+
+### 메서드 레퍼런스 만드는 방법
+
+메서드 레퍼런스는 3 가지 유형으로 구분된다.
+
+1. 정적 메서드 레퍼런스
+   1. Integer.parseInt → Integer::parseInt
+   2. (args) → ClassName.staticMethod(args) == ClassName.staticMethod
+2. 다양한 형식의 인스턴스 메서드 레퍼런스
+   1. String.length → String::length
+   2. (arg0, rest) → arg0.instanceMethod(rest) == ClassName::instanceMethod
+3. 기존 객체의 인스턴스 메서드 레퍼런스
+   1. 변수명::메서드명
+   2. (args) → expr.instanceMethod(args) == expr::instanceMethod
+
+### 생성자 레퍼런스
+
+생성자 레퍼런스 문법 = ClassName::new

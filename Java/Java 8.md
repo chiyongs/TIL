@@ -161,3 +161,46 @@ inventory.sort(comparing(Apple::getWeight));
 ### 생성자 레퍼런스
 
 생성자 레퍼런스 문법 = ClassName::new
+
+## 람다, 메서드 레퍼런스 활용하기
+
+```java
+// 1
+public class AppleComparator implements Comparator<Apple> {
+	public int compare(Apple a1, Apple a2) {
+		retrun a1.getWeight().compareTo(a2.getWeight());
+	}
+}
+inventory.sort(new AppleComparator());
+
+// 2
+inventory.sort(new Comparator<Apple>() {
+	public int compare(Apple a1, Apple a2) {
+		return a1.getWeight().compareTo(a2.getWeight());
+	}
+});
+
+// 3
+inventory.sort((Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight()));
+inventory.sort((a1, a2) -> a1.getWeight().compareTo(a2.getWeight()));
+
+// 4
+inventory.sort(comparing((a) -> a.getWeight()));
+
+// 5
+inventory.sort(comparing(Apple::getWeight));
+```
+
+이처럼 메서드 레퍼런스를 이용하면 기존의 메서드 구현을 재사용하고 직접 전달할 수 있다.
+
+또햔, Comparator, Predicate, Function 같은 함수형 인터페이스는 람다 표현식을 조합할 수 이쓴ㄴ 다양한 디폴트 메서드를 제공한다.
+
+- Comparator
+  - thenComparing
+  - reversed
+- Predicate
+  - and
+  - or
+- Function
+  - andThen
+  - compose

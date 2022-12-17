@@ -295,3 +295,18 @@ inventory.sort(comparing(Apple::getWeight));
 ### 최종 연산
 
 스트림 파이프라인에서 결과를 도출
+
+### 스트림 이용 과정
+
+- 질의를 수행할 데이터 소스
+- 스트림 파이프라인을 구성할 중간 연산 연결
+- 스트림 파이프라인을 실행하고 결과를 만들 최종 연산
+
+스트림 파이프라인의 개념은 빌더 패턴과 비슷
+
+중간 연산과 최종 연산 예시
+
+- 중간 연산
+  - filter, map, limit, sorted, distinct
+- 최종 연산
+  - forEach, count, collect

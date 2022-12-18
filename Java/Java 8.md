@@ -310,3 +310,10 @@ inventory.sort(comparing(Apple::getWeight));
   - filter, map, limit, sorted, distinct
 - 최종 연산
   - forEach, count, collect
+
+## 스트림 요약
+
+- 스트림 : 소스에서 추출된 연속 요소 → 데이터 처리 연산을 지원
+- 내부 반복을 지원
+- 중간 연산과 최종 연산
+- 스트림의 요소는 요청할 때만 계산됨

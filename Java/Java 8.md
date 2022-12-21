@@ -370,3 +370,32 @@ Optional<T> : 값의 존재나 부재 여부를 표현하는 컨테이너 클래
 - ifPresent(Consumer<T> block) : 값이 있으면 주어진 블록을 실행
 - T get() : 값이 존재하면 값을 반환하고, 없으면 NoSuchElementException 일으킴
 - T orElse(T other) : 값이 있으면 값을 반환, 없으면 기본값 반환
+
+## 리듀싱
+
+리듀싱 연산 : 모든 스트림 요소를 처리해서 값으로 도출하는 연산
+
+- 함수형 프로그래밍 언어 용어 : 폴드(종이를 작은 조각이 될 때까지 반복해서 접는 것과 비슷하다는 의미)
+
+### 요소의 합
+
+```java
+int sum = 0;
+for (int x : numbers) {
+	sum += x;
+}
+
+// 람다
+int sum = numbers.stream().reduce(0, (a, b) -> a + b);
+// 정적 메서드
+int sum = numbers.stream().reduce(0, Integer::sum);
+```
+
+reduce는 두 개의 인수를 가짐
+
+- 초깃값
+- 두 요소를 조합해서 새로운 값을 만드는 식
+
+초기값을 받지 않도록 오버로드된 reduce도 존재 → Optional 객체 반환
+
+- 스트림에 아무 요소도 없는 상황이면 초깃값이 없으므로 합계를 반환할 수 없음 → Optional 객체로 감싼 결과를 반환

@@ -399,3 +399,10 @@ reduce는 두 개의 인수를 가짐
 초기값을 받지 않도록 오버로드된 reduce도 존재 → Optional 객체 반환
 
 - 스트림에 아무 요소도 없는 상황이면 초깃값이 없으므로 합계를 반환할 수 없음 → Optional 객체로 감싼 결과를 반환
+
+### 최댓값과 최솟값
+
+- 최댓값
+  - Optional<Integer> max = numbers.stream().reduce(Integer::max);
+- 최솟값
+  - Optional<Integer> min = numbers.stream().reduce(Integer::min);

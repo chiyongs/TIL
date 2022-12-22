@@ -406,3 +406,12 @@ reduce는 두 개의 인수를 가짐
   - Optional<Integer> max = numbers.stream().reduce(Integer::max);
 - 최솟값
   - Optional<Integer> min = numbers.stream().reduce(Integer::min);
+
+### 스트림 연산
+
+- 상태 없음 (내부 상태를 갖지 않는 연산, stateless operation)
+  - 입력 스트림에서 각 요소를 받아 0 또는 결과를 출력 스트림으로 보낸다.
+  - map, filter…
+- 상태 있음 (내부 상태를 갖는 연산, stateful operation)
+  - 내부 상태를 가지고 있어야 연산이 가능함
+  - reduce, sum, max…

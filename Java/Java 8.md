@@ -436,3 +436,29 @@ reduce는 두 개의 인수를 가짐
 IntStream intStream = menu.stream().mapToInt(Dish::getCalories);
 Stream<Integer> stream = intStream.boxed();
 ```
+
+## 컬렉터
+
+멀티레벨로 그룹화를 수행할 때 명령형 프로그래밍과 함수형 프로그래밍의 차이점이 더욱 두드러진다.
+
+### 고급 리듀싱 기능을 수행하는 컬렉터
+
+훌륭하게 설계된 함수형 API의 장점 : 높은 수준의 조합성과 재사용성
+
+collect로 결과를 수집하는 과정을 간단하면서도 유연한 방식으로 정의할 수 있다는 점 → 컬렉터의 최대 강점
+
+보통 함수를 요소로 변환할 때 컬렉터를 적용하며 최종 결과를 저장하는 자료구조에 값을 누적한다.
+
+Collectors에서 제공하는 메서드의 기능
+
+- 스트림 요소를 하나의 값으로 리듀스하고 요약
+- 요소 그룹화
+- 요소 분할
+
+- counting()
+
+```java
+long howManyDishes = menu.stream().collect(Collectors.counting());
+
+long howManyDishes = menu.stream().count();
+```

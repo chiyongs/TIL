@@ -415,3 +415,24 @@ reduce는 두 개의 인수를 가짐
 - 상태 있음 (내부 상태를 갖는 연산, stateful operation)
   - 내부 상태를 가지고 있어야 연산이 가능함
   - reduce, sum, max…
+
+## 숫자형 스트림
+
+스트림 요소의 합 같은 연산을 진행하다보면 `Integer::sum` 을 사용해야 하는데 이 때는 박싱 비용이 존재한다.
+
+이를 효율적으로 처리하기 위해 기본형 특화 스트림(`primitive stream specialization`)을 제공한다.
+
+- 기본형 특화 스트림
+  - 특화 스트림은 오직 박싱 과정에서 일어하는 효율성과 관련 있으며 스트림에 추가 기능을 제공하지 않는다.
+  - IntStream, mapToInt
+    - OptionalInt 존재 : 스트림에 요소가 없는 상황과 실제 최댓값이 0인 상황을 구분하기 위함
+  - DoubleStream, mapToDouble
+    - OptionalDouble
+  - LongStream, mapToLong
+    - OptionalLong
+  - 객체 스트림으로 복원
+
+```java
+IntStream intStream = menu.stream().mapToInt(Dish::getCalories);
+Stream<Integer> stream = intStream.boxed();
+```

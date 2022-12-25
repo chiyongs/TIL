@@ -462,3 +462,19 @@ long howManyDishes = menu.stream().collect(Collectors.counting());
 
 long howManyDishes = menu.stream().count();
 ```
+
+### 리듀싱 연산
+
+- Collectors.maxBy
+  - 스트림의 최댓값 계산
+- Collectors.minBy
+  - 스트림의 최솟값 계산
+
+```java
+Comparator<Dish> disCaloriesComparator =
+		Comparator.comparingInt(Dish::getCalories);
+
+Optional<Dish< mostCalorieDish =
+		menu.stream()
+				.collect(maxBy(dishCaloriesComparator));
+```

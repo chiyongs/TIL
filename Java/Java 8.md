@@ -478,3 +478,22 @@ Optional<Dish< mostCalorieDish =
 		menu.stream()
 				.collect(maxBy(dishCaloriesComparator));
 ```
+
+### 요약 연산
+
+- Collectors.summingInt, summingLong, summingDouble : 합계
+  ```java
+  int totalCalories = menu.stream()
+  											.collect(Collectors.summingInt(Dish::getCalories));
+  ```
+- Collectors.averagingInt, averagingLong, averagingDouble : 다양한 형식으로 이루어진 숫자 집합의 평균 계산
+  ```java
+  double avgCalories = menu.stream().collect(averagingInt(Dish::getCalories));
+  ```
+- Collectors.summarizingInt, summarizingLong, summarizingDouble
+  - 컬렉터로 스트림의 요소 수를 계산, 최댓값과 최솟값을 찾고, 합계와 평균 모두 산출
+  - IntSummaryStatistics: {count=9, sum=4300, min=120, average=477.7778, max=800}
+  ```java
+  IntSummaryStatistics menuStatistics =
+  		menu.stream().collect(Collectors.summarizingInt(Dish::getCalories));
+  ```

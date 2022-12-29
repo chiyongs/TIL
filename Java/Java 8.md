@@ -497,3 +497,21 @@ Optional<Dish< mostCalorieDish =
   IntSummaryStatistics menuStatistics =
   		menu.stream().collect(Collectors.summarizingInt(Dish::getCalories));
   ```
+
+### 문자열 연결
+
+- Collectors.joining
+  - 스트림의 각 객체에 toString 메서드를 호출해서 추출한 모든 문자열을 하나의 문자열로 연결해서 반환
+
+```java
+String shortMenu = menu.stream()
+		.map(Dish::getName).collect(Collectors.joining());
+// 결과 : porkbeefchickenfrench friesriceseason fruitpizzaprawnssalmon
+
+// 결과 문자열을 해석할 수 없음
+// 연결된 두 요소 사이에 구분 문자열을 넣을 수 있음
+
+String shortMenu = menu.stream()
+		.map(Dish::getName).collect(Collectors.joining(", "));
+// 결과 : pork, beef, chicken, french fries, rice ....
+```

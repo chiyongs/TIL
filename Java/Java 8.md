@@ -515,3 +515,19 @@ String shortMenu = menu.stream()
 		.map(Dish::getName).collect(Collectors.joining(", "));
 // 결과 : pork, beef, chicken, french fries, rice ....
 ```
+
+### 범용 리듀싱 요약 연산
+
+- Collectors.reducing
+  - 위에 사용한 특화된 컬렉터를 모두 reducing으로 구현 가능
+  - but, 가독성과 편의성이 중요하므로 특화된 컬렉터를 사용했음
+  ```java
+  int totalCalories = menu.stream().collect(
+  													Collectors.reducing(0, Dish::getCalories, (i, j) -> i + j));
+  ```
+  - reducing : 3 개의 인수
+    1. 첫 번째 인수 : 리듀싱 연산의 시작값 or 스트림에 인수가 없을 때의 반환값
+    2. 두 번째 인수 : 변환 함수
+    3. 세 번째 인수 : 실행할 연산
+  - reducing : 1개의 인수를 가질 때도 있음
+    - 이 때는 스트림의 첫 번째 요소를 시작 요소, 자신을 그대로 반호나하는 항등함수를 두 번째 인수로 받음

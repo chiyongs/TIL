@@ -531,3 +531,23 @@ String shortMenu = menu.stream()
     3. 세 번째 인수 : 실행할 연산
   - reducing : 1개의 인수를 가질 때도 있음
     - 이 때는 스트림의 첫 번째 요소를 시작 요소, 자신을 그대로 반호나하는 항등함수를 두 번째 인수로 받음
+
+> collect와 reduce 차이
+
+```java
+Stream<Integer> stream = Arrays.asList(1, 2, 3, 4, 5, 6).stream();
+List<Integer> numbers = stream.reduce(
+																new ArrayList<Integer>(),
+																(List<Integer> l, Integer e) -> {
+																					l.add(e);
+																					return l; },
+																(List<Integer> l1, List<Integer> l2) -> {
+																					l1.addAll(l2);
+																					return l1; });
+```
+
+collect : 도출하려는 결과를 누적하는 컨테이너를 바꾸도록 설계된 메서드
+
+reduce : 두 값을 하나로 도출하는 불변형 연산
+
+→ 위 예제에서 reduce 메서드는 누적자로 사용된 리스트를 변환시키므로 reduce를 잘못 활용한 예

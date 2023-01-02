@@ -563,3 +563,38 @@ reduce : 두 값을 하나로 도출하는 불변형 연산
 문제를 해결할 수 있는 다양한 해결 방법을 확인한 다음에 가장 일반적으로 문제에 특화된 해결책을 고르는 것이 바람직하다.
 
 이렇게 한다면 가독성과 성능이라는 두 마리 토끼를 잡을 수 있다.
+
+## 그룹화
+
+데이터 집합을 하나 이상의 특성으로 분류해서 그룹화하는 연산도 데이터베이스에서 많이 수행되는 작업
+
+- 분류 함수
+  - Collectors.groupingBy
+  ```java
+  // 요구사항이 단순한 경우
+  Map<Dish.Type, List<Dish>> dishesByType =
+  										menu.stream().collect(Collectors.groupingBy(Dish::getType));
+
+  // 더 복잡한 분류 기준이 필요한 상황 -> 람다를 사용하여 구현
+  public enum CaloricLevel { DIET, NORMAL, FAT}
+
+  Map<CaloricLevel, List<Dish>> dishesByCaloricLevel = menu.stream().collect(
+  		Collectors.groupingBy(dish -> {
+  				if (dish.getCalories() <= 400) {
+  						return CaloricLevel.DIET;
+  				} else if (dish.getCalories() <= 700) {
+  						return CaloricLevel.NORMAL;
+  				} else {
+  						return CaloricLevel.FAT;
+  				}
+  }));
+  ```
+  - groupingBy를 사용하여 다수준의 그룹화부터 서브그룹으로 데이터 수집도 가능하다.
+  - 분류 함수 한 개의 인수를 갖는 groupingBy(f) == groupingBy(f, toList())의 축약형
+  - Collectors.collectingAndThen
+    - 적용할 컬렉텨와 변환 함수를 인수로 받아 다른 컬렉터를 반환
+    - 반환되는 컬렉터는 기존 컬렉터의 래퍼 역할을 하며 collect의 마지막 과정에서 변환함수로 자신이 반환하는 값을 매핑한다.
+  - Collectors.mapping
+    - groupingBy와 자주 사용
+    - 스트림의 인수를 변환하는 함수와 변환 함수의 결과 객체를 누적하는 컬렉터를 인수로 받음
+    - 입력 요소를 누적하기 전에 매핑 함수를 적용해서 다양한 형식의 객체를 주어진 형식의 컬렉터에 맞게 변환하는 역할

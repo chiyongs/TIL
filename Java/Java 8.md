@@ -569,7 +569,9 @@ reduce : 두 값을 하나로 도출하는 불변형 연산
 데이터 집합을 하나 이상의 특성으로 분류해서 그룹화하는 연산도 데이터베이스에서 많이 수행되는 작업
 
 - 분류 함수
+
   - Collectors.groupingBy
+
   ```java
   // 요구사항이 단순한 경우
   Map<Dish.Type, List<Dish>> dishesByType =
@@ -589,6 +591,7 @@ reduce : 두 값을 하나로 도출하는 불변형 연산
   				}
   }));
   ```
+
   - groupingBy를 사용하여 다수준의 그룹화부터 서브그룹으로 데이터 수집도 가능하다.
   - 분류 함수 한 개의 인수를 갖는 groupingBy(f) == groupingBy(f, toList())의 축약형
   - Collectors.collectingAndThen
@@ -598,3 +601,16 @@ reduce : 두 값을 하나로 도출하는 불변형 연산
     - groupingBy와 자주 사용
     - 스트림의 인수를 변환하는 함수와 변환 함수의 결과 객체를 누적하는 컬렉터를 인수로 받음
     - 입력 요소를 누적하기 전에 매핑 함수를 적용해서 다양한 형식의 객체를 주어진 형식의 컬렉터에 맞게 변환하는 역할
+
+## 분할
+
+- 분할 : 분할 함수라 불리는 프레디케이트를 분류 함수로 사용하는 특수한 그룹화 기능
+- 분할 함수는 불린을 반환하므로 맵의 키 형식은 Boolean이다.
+
+```java
+Map<Boolean, List<Dish>> partitionedMenu =
+						menu.stream().collect(Collectors.partitioningBy(Dish::isVegetarian));
+```
+
+- 분할의 장점
+  - 분할 함수가 반환하는 참, 거짓 두 가지 요소의 스트림 리스트를 모두 유지한다는 것

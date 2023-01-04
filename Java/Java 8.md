@@ -614,3 +614,25 @@ Map<Boolean, List<Dish>> partitionedMenu =
 
 - 분할의 장점
   - 분할 함수가 반환하는 참, 거짓 두 가지 요소의 스트림 리스트를 모두 유지한다는 것
+
+## Collector 인터페이스
+
+Collector 인터페이스는 리듀싱 연산(즉, 컬렉터)을 어떻게 구현할지 제공하는 메서드 집합으로 구성된다.
+
+ex) toList, groupingBy
+
+Collector 인터페이스를 구현하는 리듀싱 연산을 만들 수 있다.
+
+```java
+public interface Collector<T, A, R> {
+		Supplier<A> supplier();
+		BiConsumer<A, T> accumulator();
+		Function<A, R> finisher();
+		BinaryOperator<A> combiner();
+		Set<Characteristics> characteristics();
+}
+```
+
+- T : 수집될 스트림 항목의 제네릭 형식
+- A : 누적자, 즉 수집 과정에서 중간 결과를 누적하는 객체의 형식
+- R : 수집 연산 결과 객체의 형식 (대개 컬렉션 형식)

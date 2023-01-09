@@ -759,6 +759,24 @@ comparing과 maxBy 같은 정적 헬퍼 메서드 또는 Collectors API를 사�
 
 - short circuit, lazyness → 강력한 최적화 & 멀티코어 아키텍처를 활용할 수 있는 지름길 제공
 
+```java
+List<String> dishNames = new ArrayList<>();
+for(Dish dish : menu) {
+		if (dish.ggetCalories() > 300) {
+				dishNames.add(dish.getName());
+		}
+}
+```
+
+→
+
+```java
+menu.parallelStream()
+		.filter(d -> d.getCalories() > 300)
+		.map(Dish::getName)
+		.collect(toList());
+```
+
 명령형 코드의 break, continue, return 등의 제어 흐름문을 모두 분석해서 같은 기능을 수행하는 스트림 연산을 유츄하는 것을 쉬운 일이 아니다.
 
 하지만, 명령형 코드를 스트림 API로 바꾸도록 도움을 주는 도구들이 있다.

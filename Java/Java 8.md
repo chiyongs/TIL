@@ -772,3 +772,55 @@ comparing과 maxBy 같은 정적 헬퍼 메서드 또는 Collectors API를 사�
   - 실행 어라운드(execute around)
     - 매번 같은 준비, 종료 과정을 반복적으로 수행하는 코드 → 람다로 변환
     - 준비, 종료 과정을 처리하는 로직을 재사용 → 코드 중복 줄임
+
+## 람다로 객체지향 디자인 패턴 리팩토링
+
+- 디자인 패턴
+  - 다양한 패턴을 유형별로 정리한 것
+  - 공통적인 소프트웨어 문제를 설계할 때 재사용할 수 있는, 검증된 청사진을 제공
+
+### 전략 패턴 Strategy
+
+전략 패턴 : 한 유형의 알고리즘을 보유한 상태에서 런타임에 적절한 알고리즘을 선택하는 기법
+
+예시) 오직 소문자 또는 숫자로 이루어져야 하는 등 텍스트 입력이 다양한 조건에 맞게 포맷되어 있는지 검증하는 경우
+
+```java
+public interface ValidatiaonStrategy {
+		boolean execute(String s);
+}
+
+public class IsAllLowerCase implements ValidationStrategy {
+		public boolean execute(String s) {
+				return s.matches("[a-z]+");
+		}
+}
+
+public class IsNumeric implements ValidataionStrategy {
+		public boolean execute(String s) {
+				return s.matches("\\d+");
+		}
+}
+
+@RequiredArgsConstructor
+public class Validator {
+		private final ValidataionStrategy strategy;
+
+		public boolean validate(String s) {
+				return strategy.execute(s);
+		}
+}
+
+Validator numericValidator = new Validator(new IsNumeric());
+boolean b1 = numericValidator.validate("aaaa");
+Validator lowerCaseValidator = new Validator(new IsAllLowerCase());
+boolean b2 = lowerCaseValidator.validate("bbbb");
+
+// 람다 표현식 사용
+Validator numericValidator = new Validator((String s) -> s.matches("[a-z]+"));
+boolean b1 = numericValidator.validate("aaaa");
+Validator lowerCaseValidator = new Validator((String s) -> s.matches("\\d+"));
+boolean b2 = lowerCaseValidator.validate("bbbb");
+```
+
+람다 표현식으로 전략 디자인 패턴을 대신할 수 있다.

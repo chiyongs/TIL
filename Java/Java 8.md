@@ -842,3 +842,30 @@ boolean b2 = lowerCaseValidator.validate("bbbb");
 ```
 
 람다 표현식으로 전략 디자인 패턴을 대신할 수 있다.
+
+### 템플릿 메서드
+
+알고리즘의 개요를 제시한 다음 알고리즘의 일부를 고칠 수 있는 유연함을 제공해야 할 때 템플릿 메서드 디자인 패턴을 사용한다.
+
+```java
+abstract class OnlineBanking {
+		public void processCustomer(int id) {
+				Customer c = Database.getCustomerWithId(id);
+				makeCustomerHappy(c);
+		}
+
+		abstract void makeCustomerHappy(Customer c);
+}
+```
+
+- 람다 표현식
+  ```java
+  public void processCustomer(int id, Consumer<Customer> makeCustomerHappy) {
+  		Customer c = Database.getCustomerWithId(id);
+  		makeCustomer.accept(c);
+  }
+
+  new OnlineBankingLambda().processCustomer(1337, (Customer c) ->
+  		System.out.println("Hello " + c.getName());
+  ```
+  이처럼 람다 표현식을 이용하면 템플릿 메서드 디자인 패턴에서 발생하는 자잘한 코드를 제거할 수 있다.

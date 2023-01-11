@@ -859,6 +859,7 @@ abstract class OnlineBanking {
 ```
 
 - 람다 표현식
+
   ```java
   public void processCustomer(int id, Consumer<Customer> makeCustomerHappy) {
   		Customer c = Database.getCustomerWithId(id);
@@ -868,4 +869,82 @@ abstract class OnlineBanking {
   new OnlineBankingLambda().processCustomer(1337, (Customer c) ->
   		System.out.println("Hello " + c.getName());
   ```
+
   이처럼 람다 표현식을 이용하면 템플릿 메서드 디자인 패턴에서 발생하는 자잘한 코드를 제거할 수 있다.
+
+### 옵저버
+
+이벤트 발생 시 한 객체가 다른 객체 리스트에 자동으로 알림을 보내야 하는 상황에서 옵저버 디자인 패턴을 사용한다.
+
+주로 GUI 애플리케이션에서 옵저버 패턴이 자주 등장한다.
+
+```java
+interface Observer {
+		void notify(String tweet);
+}
+
+class NYTimes implements Observer {
+		public void notify(String tweet) {
+				if (tweet != null && tweet.contains("money")) {
+						System.out.println("Breaking news in NY! " + tweet(;
+				}
+		}
+}
+
+class Guardian implements Observer {
+		public void notify(String tweet) {
+				if (tweet != null && tweet.contains("money")) {
+						System.out.println("Yet another news in London... " + tweet(;
+				}
+		}
+}
+```
+
+```java
+interface Subject {
+		void registerObserver(Observer o);
+		void notifyObservers(String tweet);
+}
+
+class Feed implements Subject {
+		private final List<Observer> observers = new ArrayList<>();
+
+		public void registerObserver(Observer o) {
+				this.observers.add(o);
+		}
+
+		public void notifyObservers(String tweet) {
+				observers.forEach(o -> o.notify(tweet));
+		}
+}
+```
+
+```java
+Feed f = new Feed();
+f.registerObserver(new NYTimes());
+f.registerObserver(new Guardian());
+
+f.notifyObservers("The queen said her favourite book is Java 8 in Action!");
+```
+
+- 람다 표현식 사용하기
+
+```java
+f.registerObserver((String tweet) -> {
+		if (tweet != null && tweet.contains("money")) {
+				System.out.println("Breaking news in NY! " + tweet);
+		}
+});
+
+f.registerObserver((String tweet) -> {
+		if (tweet != null && tweet.contains("money")) {
+				System.out.println("Yet another news in London... " + tweet);
+		}
+});
+```
+
+람다를 통해 불필요하게 감싸는 코드를 제거했다.
+
+위 예제에서는 실행해야 할 동작이 비교적 간단하므로 람다 표현식으로 불필요한 코드를 제거하는 것이 좋다.
+
+하지만, 옵저버가 상태를 가지며, 여러 메서드를 정의하는 등 복잡하다면 람다 표현식보다 기존의 클래스 구현 방식을 고수하는 것이 바람직할 수도 있다.

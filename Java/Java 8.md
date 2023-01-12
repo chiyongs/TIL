@@ -948,3 +948,70 @@ f.registerObserver((String tweet) -> {
 위 예제에서는 실행해야 할 동작이 비교적 간단하므로 람다 표현식으로 불필요한 코드를 제거하는 것이 좋다.
 
 하지만, 옵저버가 상태를 가지며, 여러 메서드를 정의하는 등 복잡하다면 람다 표현식보다 기존의 클래스 구현 방식을 고수하는 것이 바람직할 수도 있다.
+
+### 의무 체인
+
+작업처리 객체의 체인(동작 체인 등)을 만들 때는 의무 체인 패턴을 사용한다.
+
+한 객체가 어떤 작업을 처리한 다음에 다른 객체로 결과를 전달하고, 다른 객체도 해야 할 작업을 처리한 다음에 또 다른 객체로 전달하는 식이다.
+
+일반적으로 다음으로 처리할 객체 정보를 유지하는 필드를 포함하는 작업 처리 추상 클래스로 의무 체인 패턴을 구성한다.
+
+```java
+public abstract class ProcessingObject<T> {
+		protected ProcessingObject<T> successor;
+
+		public void setSuccessor(ProcessingObject<T> successor) {
+				this.successor = successor;
+		}
+
+		public T handle(T input) {
+				T r = handleWork(input);
+				if (successor != null) {
+						return successor.handle(r);
+				}
+				return r;
+		}
+
+		abstract protected T handleWork(T input);
+}
+```
+
+```java
+public class HeaderTextProcessing extends ProcessingObject<String> {
+		public String handleWork(String text) {
+				return "From Raoul, Mario and Alan: " + text;
+		}
+}
+
+public class SpellCheckerProcessing extends ProcessingObject<String> {
+		public String handleWork(String text) {
+				return text.replaceAll("labda", "lambda");
+		}
+}
+
+ProcessingObject<String> p1 = new HeaderTextProcessing();
+ProcessingObject<String> p2 = new SpellCheckerProcessing();
+
+p1.setSuccessor(p2);
+
+String result = p1.handle("Aren`t labdas really sexy?!!");
+System.out.println(result);
+```
+
+- 람다 표현식 사용
+
+의무 체인 패턴은 함수 체인과 비슷하다.
+
+```java
+UnaryOperator<String> headerProcessing =
+		(String text) -> "From Raoul, Mario and Alan: " + text;
+
+UnaryOperator<String> spellCheckerProcessing =
+		(String text) -> text.replaceAll("labda", "lambda");
+
+Function<String, String> pipeline =
+		headerProcessing.andThen(spellCheckerProcessing);
+
+String result = pipeline.apply("Aren`t labdas really sexy?!!");
+```

@@ -1015,3 +1015,52 @@ Function<String, String> pipeline =
 
 String result = pipeline.apply("Aren`t labdas really sexy?!!");
 ```
+
+### 팩토리
+
+인스턴스화 로직을 클라이언트에 노출하지 않고 객체를 만들 때 팩토리 디자인 패턴을 사용한다.
+
+```java
+public class ProductFactor {
+		public static Product createProduct(String name) {
+				switch (name) {
+						case "loan":
+								return new Loan();
+						case "stock":
+								return new Stock();
+						case "bond":
+								return new Bond();
+						default:
+								throw new RuntimeException("No such product " + name);
+				}
+		}
+}
+
+Product p = ProductFactory.createProduct("loan");
+```
+
+- 람다 표현식 사용
+
+```java
+Supplier<Product> loanSupplier = Loan::new;
+Loan loan = loanSupplier.get();
+
+final static Map<String, Supplier<Product>> map = new HashMap<>();
+static {
+		map.put("loan", Loan::new);
+		map.put("stock", Stock::new);
+		map.put("bond", Bond::new);
+}
+
+public static Product createProduct(String name) {
+		Supplier<Product> p = map.get(name);
+		if(p != null) return p.get();
+		throw new IllegalArgumentException("No such product " + name);
+}
+```
+
+다음과 같이 람다를 사용해 다양한 상품을 인스턴스화할 수 있다.
+
+하지만, 팩토리 메서드 `createProduct` 가 생품 생성자로 여러 인수를 전달하는 상황에서는 이 기법을 적용하기 어렵다.
+
+따라서, 상황에 맞게 사용해야 한다.

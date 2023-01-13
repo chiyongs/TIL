@@ -1064,3 +1064,40 @@ public static Product createProduct(String name) {
 하지만, 팩토리 메서드 `createProduct` 가 생품 생성자로 여러 인수를 전달하는 상황에서는 이 기법을 적용하기 어렵다.
 
 따라서, 상황에 맞게 사용해야 한다.
+
+## 람다 테스팅
+
+람다는 익명이므로 테스트 코드 이름을 호출할 수 없다.
+
+- 람다를 테스트하는 방법
+  - 보이는 람다 표현식의 동작 테스팅
+    ```java
+    @Test
+    public void testMoveRightBy() throws Exception {
+    		Point p1 = new Point(5, 5);
+    		Point p2 = p1.moveRightBy(10);
+
+    		assertEquals(15, p2.getX());
+    		assertEquals(5, p2.getY());
+    }
+    ```
+    ```java
+    public final static Comparator<Point> compareByXAndThenY =
+    		comparing(Point::getX).thenComparing(Point::getY);
+
+    @Test
+    public void testComparingTwoPoints() throws Exception {
+    		Point p1 = new Point(10, 15);
+    		Point p2 = new Potin(10, 20);
+    		int result = Point.compareByXAndThenY.compare(p1, p2);
+    		assertEquals(-1, result);
+    }
+    ```
+  - 람다를 사용하는 메서드의 동작에 집중
+    - 람다의 목표 : 정해진 동작을 다른 메서드에서 사용할 수 있도록 하나의 조각으로 캡슐화하는 것
+    - 람다를 사용하는 메서드를 테스트
+  - 복잡한 람다를 개별 메서드로 분할
+    - 람다 표현식을 메서드 레퍼런스로 바꾸기
+  - 고차원 함수 테스팅
+    - 메서드가 람다를 인수로 받는다면 다른 람다로 메서드의 동작을 테스트
+    - 테스트해야 할 메서드가 다른 함수를 반환한다면 함수형 인터페이스의 인스턴스로 간주하고 함수의 동작을 테스트

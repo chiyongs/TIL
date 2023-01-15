@@ -1070,7 +1070,9 @@ public static Product createProduct(String name) {
 람다는 익명이므로 테스트 코드 이름을 호출할 수 없다.
 
 - 람다를 테스트하는 방법
+
   - 보이는 람다 표현식의 동작 테스팅
+
     ```java
     @Test
     public void testMoveRightBy() throws Exception {
@@ -1081,6 +1083,7 @@ public static Product createProduct(String name) {
     		assertEquals(5, p2.getY());
     }
     ```
+
     ```java
     public final static Comparator<Point> compareByXAndThenY =
     		comparing(Point::getX).thenComparing(Point::getY);
@@ -1093,6 +1096,7 @@ public static Product createProduct(String name) {
     		assertEquals(-1, result);
     }
     ```
+
   - 람다를 사용하는 메서드의 동작에 집중
     - 람다의 목표 : 정해진 동작을 다른 메서드에서 사용할 수 있도록 하나의 조각으로 캡슐화하는 것
     - 람다를 사용하는 메서드를 테스트
@@ -1101,3 +1105,36 @@ public static Product createProduct(String name) {
   - 고차원 함수 테스팅
     - 메서드가 람다를 인수로 받는다면 다른 람다로 메서드의 동작을 테스트
     - 테스트해야 할 메서드가 다른 함수를 반환한다면 함수형 인터페이스의 인스턴스로 간주하고 함수의 동작을 테스트
+
+## 디버깅
+
+코드 디버깅 시 가장 먼저 확인해야 하는 두 가지
+
+- 스택 트레이스
+- 로깅
+
+### 스텍 트레이스 확인
+
+예외가 발생한다면 프로그램 실행이 어디서 멈췄고 어떻게 멈추게 되었는지 살펴봐야 한다.
+
+> 스택 트레이스
+
+프로그램이 멈췄다면 프로그램이 어떻게 멈추게 되었는지 프레임별로 보여주는 것
+
+→ 문제가 발생한 지점에 이르게 된 메서드 호출 리스트를 얻을 수 있다.
+
+람다의 경우 이름이 없기 때문에 조금 복잡한 스택 트레이스가 생성된다.
+
+```java
+points.stream().map(Point::getX).forEach(System.out::println);
+```
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7245a6a6-1f15-4f93-962a-29adbd273eec/Untitled.png)
+
+스택 트레이스로는 어디서 잘못되었는지 판단하기 힘들다.
+
+메서드 레퍼런스를 사용해도 동일하다.
+
+하지만, 메서드 레퍼런스를 사용하는 클래스와 같은 곳에 선언되어 있는 메서드를 참조할 때는 메서드 레퍼런스 이름이 스택 트레이스에 나타난다.
+
+람다 표현식과 관련된 스택 트레이스는 이해하기 어렵다 → 미래의 자바 컴파일러가 개선해야 할 부분

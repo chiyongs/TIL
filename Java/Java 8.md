@@ -1203,3 +1203,7 @@ Optional<T> : 선택형값을 캡슐화하는 클래스
 하지만, 모든 null을 Optional로 대치하는 것은 바람직하지 않다.
 
 Optional의 역할은 더 이해하기 쉬운 API를 설계하도록 돕는 것이다.
+
+- Optional.empty() : 빈 Optional 객체
+- Optional.of(T) : null이 아닌 값으로 만들어진 Optional 객체
+- Optional.ofNullable(T) : null일수도 있는 값으로 만들어진 Optional 객체

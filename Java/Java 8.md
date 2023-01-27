@@ -1207,3 +1207,19 @@ Optional의 역할은 더 이해하기 쉬운 API를 설계하도록 돕는 것�
 - Optional.empty() : 빈 Optional 객체
 - Optional.of(T) : null이 아닌 값으로 만들어진 Optional 객체
 - Optional.ofNullable(T) : null일수도 있는 값으로 만들어진 Optional 객체
+
+  > Optional map
+
+```java
+String name = null;
+if (insurance != null) {
+		name = insurance.getName();
+}
+```
+
+→
+
+```java
+Optional<Insurance> optInsurance = Optional.ofNullable(insurance);
+Optional<String> name = optInsurance.map(Insurance::getName);
+```

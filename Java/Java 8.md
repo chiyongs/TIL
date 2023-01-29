@@ -1223,3 +1223,14 @@ if (insurance != null) {
 Optional<Insurance> optInsurance = Optional.ofNullable(insurance);
 Optional<String> name = optInsurance.map(Insurance::getName);
 ```
+
+> Optional flatMap
+
+```java
+public String getCarInsuranceName(Optional<Person> person) {
+		return person.flatMap(Person::getCar)
+								 .flatMap(Car::getInsurance)
+								 .map(Insurance::getName)
+								 .orElse("Unknown");
+}
+```

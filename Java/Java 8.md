@@ -1234,3 +1234,17 @@ public String getCarInsuranceName(Optional<Person> person) {
 								 .orElse("Unknown");
 }
 ```
+
+> Optional 메서드
+
+- get() : 값을 읽는 가장 간단한 메서드 & 동시에 가장 안전하지 않은 메서드
+  - 래핑된 값이 있으면 해당 값을 반환, 없으면 `NoSuchElementException` 발생
+  - 따라서, 중첩된 null 체크 코드를 넣는 것과 비슷한 상황 초래
+- orElse(T other) : Optional이 값을 포함하지 않을 때 디폴트값을 제공 가능
+- orElseGet(Supplier<? extends T> other) : orElse 메서드에 대응하는 게으른 버전
+  - Optional에 값이 없을 때만 Supplier가 실행됨
+  - 디폴트 메서드를 만드는 데 시간이 걸리거나 Optional이 비어있을 때만 디폴트값을 생성하고 싶다면 사용
+- orElseThrow(Supplier<? extends X> exceptionSupplier) : Optional이 비어있을 때 예외를 발생
+  - 발생시킬 예외의 종류 선택 가능
+- ifPresent(Consumer<? super T> consumer) : 값이 존재할 때 인수로 넘겨준 동작을 실행
+  - 값이 없으면 아무 일도 일어나지 않음

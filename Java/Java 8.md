@@ -1248,3 +1248,24 @@ public String getCarInsuranceName(Optional<Person> person) {
   - 발생시킬 예외의 종류 선택 가능
 - ifPresent(Consumer<? super T> consumer) : 값이 존재할 때 인수로 넘겨준 동작을 실행
   - 값이 없으면 아무 일도 일어나지 않음
+    > 두 Optional 합치기
+
+```java
+public Optional<Insurance> nullSafeFindCheapestInsurance(
+															Optional<Person> person, Optional<Car> car) {
+		if (person.isPresent() && car.isPresent()) {
+				return Optional.of(findCheapestInsurance(person.get(), car.get());
+		} else {
+				return Optional.empty();
+		}
+}
+```
+
+→
+
+```java
+public Optional<Insurance> nullSafeFindCheapsetInsurance(
+															Optional<Person> person, Optional<Car> car) {
+		return person.flatMap(p -> car.map(c -> findCheapestInsurance(p, c)));
+}
+```

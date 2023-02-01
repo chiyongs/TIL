@@ -1269,3 +1269,23 @@ public Optional<Insurance> nullSafeFindCheapsetInsurance(
 		return person.flatMap(p -> car.map(c -> findCheapestInsurance(p, c)));
 }
 ```
+
+### 필터로 특정값 거르기
+
+```java
+Insurance insurance = ...;
+if (insurance != null && "CambridgeInsurance".equals(insurance.getName())) {
+		System.out.println("ok");
+}
+```
+
+→
+
+```java
+Optional<Insurance> optInsurance = ...;
+optInsurance.filter(insurance ->
+													"CambridgeInsurance".equals(insurance.getName()))
+						.ifPresent(x -> System.out.println("ok"));
+```
+
+Optional : 최대 한 개의 요소를 포함할 수 있는 스트림과 같다.

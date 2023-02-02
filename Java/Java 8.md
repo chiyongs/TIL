@@ -1289,3 +1289,20 @@ optInsurance.filter(insurance ->
 ```
 
 Optional : 최대 한 개의 요소를 포함할 수 있는 스트림과 같다.
+
+## Optional 응용
+
+```java
+Properties props = new Properties();
+props.setProperty("a", "5");
+props.setProperty("b", "true");
+props.setProperty("c", "-3");
+
+public int readDuration(Properties props, String name)
+-> Properties를 읽어 값을 초 단위의 지속시간으로 해석
+
+assertEquals(5, readDuration(param, "a"));
+assertEquals(0, readDuration(param, "b"));
+assertEquals(0, readDuration(param, "c"));
+assertEquals(0, readDuration(param, "d"));
+```

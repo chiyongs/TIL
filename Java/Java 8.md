@@ -1306,3 +1306,18 @@ assertEquals(0, readDuration(param, "b"));
 assertEquals(0, readDuration(param, "c"));
 assertEquals(0, readDuration(param, "d"));
 ```
+
+```java
+public int readDuration(Properties props, String name) {
+		String value = props.getProperty(name);
+		if (value != null) {
+				try {
+						int i = Integer.parseInt(value);
+						if (i > 0) {
+								return i;
+						}
+				} catch (NumberFormatException nfe) { }
+		}
+		return 0;
+}
+```

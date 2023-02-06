@@ -1321,3 +1321,14 @@ public int readDuration(Properties props, String name) {
 		return 0;
 }
 ```
+
+→
+
+```java
+public int readDuration(Properties props, String name) {
+		return Optional.ofNullable(props.getProperty(name))
+									 .flatMap(OptionalUtility::stringToInt)
+									 .filter(i -> i>0)
+									 .orElse(0);
+}
+```

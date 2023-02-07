@@ -1332,3 +1332,33 @@ public int readDuration(Properties props, String name) {
 									 .orElse(0);
 }
 ```
+
+# CompletableFuture
+
+## Future
+
+- 자바 5부터 미래의 어느 시점에 결과를 얻는 모델에 활용할 수 있는 인터페이스
+- 비동기 계산을 모델링
+- 계산이 끝났을 때 결과에 접근할 수 있는 레퍼런스 제공
+
+자바 8 이전 Future를 사용하는 예시 코드
+
+```java
+ExecutorService executor = Executors.newCachedThreadPool();
+Future<Double> future = executor.submit(new Callable<Double>() {
+		public Double call() {
+				// 시간이 오래 걸리는 작업은 다른 스레드에서 비동기적으로 실행
+				return doSomeLongComputation();
+		}
+});
+
+// 비동기 작업을 수행하는 동안 다른 작업을 수행
+doSomethingElse();
+
+try {
+		Double result = future.get(1, TimeUnit.SECONDS);
+} catch (ExecutionException ee) {
+		...
+}
+...
+```

@@ -1396,3 +1396,17 @@ Future → Collection, CompletableFuture → Stream으로 비유할 수 있다.
 다른 스레드에 할당된 나머지 계산 결과는 콜백 메서드를 호출해서 전달하거나 호출자가 계산 결과가 끝날 때 까지 기다리는 메서드를 추가로 호출하면서 전달된다.
 
 주로 I/O 시스템 프로그래밍에서 이와 같은 방식으로 동작을 수행한다.
+
+## 비동기 API 구현
+
+임의로 오래 걸리는 작업의 역할을 하는 delay메서드 생성
+
+```java
+public static void delay() {
+		try {
+				Thread.sleep(1000L);
+		} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+		}
+}
+```

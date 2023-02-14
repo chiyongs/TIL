@@ -1410,3 +1410,16 @@ public static void delay() {
 		}
 }
 ```
+
+동기 메서드
+
+```java
+public double getPrice(String product) {
+		return calculatePrice(product);
+}
+
+private double calculatePrice(String product) {
+		delay();
+		return random.nextDouble() * product.charAt(0) + product.charAt(1);
+}
+```

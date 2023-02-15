@@ -1423,3 +1423,22 @@ private double calculatePrice(String product) {
 		return random.nextDouble() * product.charAt(0) + product.charAt(1);
 }
 ```
+
+→
+
+비동기 메서드
+
+```java
+public Future<Double> getPriceAsync(String product) {
+		// 계산 결과를 포함할 CompletableFuture 생성
+		CompletableFuture<Double> futurePrice = new CompletableFuture<>();
+		// 다른 스레드에서 비동기적으로 계산을 수행
+		new Thread( () -> {
+									double price = calculatePrice(product);
+									// 오랜 시간이 걸리는 계산이 완료되면 Future에 값을 설정
+									futurePrice.complete(price);
+		}).start();
+		// 계산 결과가 완료되길 기다리지 않고 Future를 반환
+		return futurePrice;
+}
+```

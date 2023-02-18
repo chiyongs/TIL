@@ -1442,3 +1442,19 @@ public Future<Double> getPriceAsync(String product) {
 		return futurePrice;
 }
 ```
+
+### 비동기 API 사용
+
+```java
+Shop shop = new Shop("BestShop");
+Future<Double> futurePrice = shop.getPriceAsync("my favorite product");
+
+// 제품 가격을 계산하는 동안 다른 상점 검색 등 다른 작업 수행
+doSomethingElse();
+try {
+// 가격 정보가 있으면 Future에서 가격 정보를 읽고, 가격 정보가 없으면 가격 정보를 받을 때까지 블록
+		double price = futurePrice.get();
+} catch (Exception e) {
+		throw new RuntimeException(e);
+}
+```

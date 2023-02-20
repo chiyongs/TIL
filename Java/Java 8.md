@@ -1465,3 +1465,30 @@ try {
 따라서, 에러가 발생해도 가격 계산은 계속 진행되며 일의 순서가 꼬이게 된다.
 이로인해 클라이언트는 get메서드가 반환될 때까지 영원히 기다리게 될 수도 있다.
 이를 해결하기 위해 CompletableFuture 내부에서 발생한 에러를 전파하도록 수정한다.
+
+```java
+public Future<Double> getPriceAsync(String product) {
+		// 계산 결과를 포함할 CompletableFuture 생성
+		CompletableFuture<Double> futurePrice = new CompletableFuture<>();
+		// 다른 스레드에서 비동기적으로 계산을 수행
+		new Thread( () -> {
+									try {
+											double price = calculatePrice(product);
+											futurePrice.complete(price);
+									} catch (Exception ex) {
+											// 도중에 문제가 발생하면 발생한 에러를 포함시켜 Future 종료
+											futurePrice.completeExceptionally(ex);
+									}
+		}).start();
+		// 계산 결과가 완료되길 기다리지 않고 Future를 반환
+		return futurePrice;
+}
+```
+
+위 코드와 동일하게 CompletableFuture에서는 supplyAsync 메서드를 제공한다.
+
+```java
+public Future<Double> getPriceAsync(String product) {
+		return CompletableFuture.supplyAsync(() -> calculatePrice(product));
+}
+```

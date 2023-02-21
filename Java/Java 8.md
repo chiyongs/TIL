@@ -1492,3 +1492,27 @@ public Future<Double> getPriceAsync(String product) {
 		return CompletableFuture.supplyAsync(() -> calculatePrice(product));
 }
 ```
+
+### 병렬 스트림으로 요청 병렬화
+
+```java
+public List<String> findPrices(String product) {
+		return shops.stream()
+								.map(shop -> shop.getName() + shop.getPrice(product))
+								.collect(toList());
+}
+```
+
+만약, getPrice 메서드가 1초씩 걸린다면, 전체 가격 검색 결과는 n초 딜레이된다.
+
+이를 병렬 스트림으로 개선해본다.
+
+```java
+public List<String> findPrices(String product) {
+		return shops.parallelStream()
+								.map(shop -> shop.getName() + shop.getPrice(product))
+								.collect(toList());
+}
+```
+
+병렬 스트림을 활용하면 getPrice 메서드가 1초 소요되므로, 전체 가격 검색 결과는 상점 수 / 쓰레드 개수 초로 완료된다.

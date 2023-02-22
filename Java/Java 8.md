@@ -1535,6 +1535,6 @@ public List<String> findPrices(String product) {
 두 개의 map 연산을 하나의 스트림 파이프라인으로 처리하지 않고 두 개의 스트림 파이프라인으로 처리한 이유가 있다.
 스트림 연산은 lazy하기 때문에 하나의 파이프라인으로 처리했다면 모든 가격 정보 요청 동작이 동기적, 순차적으로 이루어지는 결과가 된다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cc2bdda1-d8e5-4b24-a976-139e9838b71b/Untitled.png)
+![Untitled](./image/CompletableFuture%EB%B9%84%EB%8F%99%EA%B8%B0%ED%98%B8%EC%B6%9C%EA%B5%AC%ED%98%84.png)
 
 하지만, 이 방법은 병렬 스트림으로 해결한 방법에 비해 코드 변경도 많이 했지만 드라마틱할 정도의 성능 개선이 되진 않았다.

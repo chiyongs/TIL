@@ -1535,6 +1535,14 @@ public List<String> findPrices(String product) {
 두 개의 map 연산을 하나의 스트림 파이프라인으로 처리하지 않고 두 개의 스트림 파이프라인으로 처리한 이유가 있다.
 스트림 연산은 lazy하기 때문에 하나의 파이프라인으로 처리했다면 모든 가격 정보 요청 동작이 동기적, 순차적으로 이루어지는 결과가 된다.
 
-![Untitled](./image/CompletableFuture%EB%B9%84%EB%8F%99%EA%B8%B0%ED%98%B8%EC%B6%9C%EA%B5%AC%ED%98%84.png)
+![CompletableFuture비동기호출구현설명](./image/CompletableFuture%EB%B9%84%EB%8F%99%EA%B8%B0%ED%98%B8%EC%B6%9C%EA%B5%AC%ED%98%84.png)
 
 하지만, 이 방법은 병렬 스트림으로 해결한 방법에 비해 코드 변경도 많이 했지만 드라마틱할 정도의 성능 개선이 되진 않았다.
+
+### 더 확장성이 좋은 해결 방법
+
+병렬 스트림 버전과 CompletableFuture 버전이 비슷한 성능을 보이는 이유는 두 버전 모두 내부적으로 Runtime.getRuntime().availableProcessors() 가 반환하는 스레드 수를 사용하기 때문이다.
+
+하지만, CompletableFuture는 병렬 스트림 버전에 비해 작업에 이용할 수 있는 다양한 Executor를 지정할 수 있다는 장점이 있다.
+
+이로써 스레드 풀의 크기를 조절하는 등 애플리케이션에 맞는 최적화된 설정이 가능하다.

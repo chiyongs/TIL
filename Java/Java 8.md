@@ -1546,3 +1546,17 @@ public List<String> findPrices(String product) {
 하지만, CompletableFuture는 병렬 스트림 버전에 비해 작업에 이용할 수 있는 다양한 Executor를 지정할 수 있다는 장점이 있다.
 
 이로써 스레드 풀의 크기를 조절하는 등 애플리케이션에 맞는 최적화된 설정이 가능하다.
+
+### 커스텀 Executor 사용하기
+
+```java
+private final Executor executor =
+					Executors.newFixedThreadPool(Math.min(shops.size(), 100),
+																			 new ThreadFactory() {
+									public Thread newThread(Runnable r) {
+												Thread t = new Thread(r);
+												t.setDaemon(true);
+												return t;
+									}
+});
+```

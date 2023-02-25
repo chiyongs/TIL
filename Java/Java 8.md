@@ -1560,3 +1560,21 @@ private final Executor executor =
 									}
 });
 ```
+
+> 데몬 스레드(daemon thread)
+
+자바에서 일반 스레드가 실행 중이면 자바 프로그램은 종료되지 않는다.
+
+하지만, 어떤 이벤트를 한없이 기다리면서 종료되지 않는 일반 스레드가 있다면 문제가 된다.
+
+데몬 스레드는 자바 프로그램이 종료될 때 강제로 실행이 종료될 수 있다.
+
+두 스레드의 성능은 동일하다.
+
+위처럼 만든 Executor는 CompletableFuture의 팩토리 메서드 supplyAsync의 두 번째 인수로 전달할 수 있다.
+
+```java
+CompletableFuture.supplyAsync(() -> shop.getName() + shop.getPrice(product), executor);
+```
+
+이처럼 CompletableFuture는 애플리케이션 특성에 맞는 Executor를 만들어 활용하면 더 좋은 성능을 낼 수 있다.

@@ -1578,3 +1578,8 @@ CompletableFuture.supplyAsync(() -> shop.getName() + shop.getPrice(product), exe
 ```
 
 이처럼 CompletableFuture는 애플리케이션 특성에 맞는 Executor를 만들어 활용하면 더 좋은 성능을 낼 수 있다.
+
+> 스트림 병렬화와 CompletableFuture 병렬화 선택 기준
+
+- I/O가 포함되지 않은 계산 중심의 동작을 실행할 때는 스트림 인터페이스가 가장 구현이 간단하며 효율적이다. (모든 스레드가 계산 작업을 수행하는 상황에서는 프로세서 코어 수 이상의 스레드를 가질 필요가 없다.)
+- 작업이 I/O를 기다리는 작업을 병렬로 실행할 때는 CompletableFuture가 더 많은 유연성을 제공하여 적합한 스레드 수를 설정할 수 있다. 스트림의 Lazy한 특성때문에 스트림에서는 I/O를 실제로 언제 처리할지 예측하기 어려운 문제도 있다.

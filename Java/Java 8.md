@@ -1602,3 +1602,19 @@ public class Discount {
 		...
 }
 ```
+
+getPrice 메서드 결과 형식 변경
+
+```java
+public String getPrice(String product) {
+		double price = calculatePrice(product);
+		Discount.Code code = Discount.Code.values()[
+														random.nextInt(Discount.Code.values().length)];
+		return String.format("%s:%.2f:%s", name, price, code);
+}
+
+private double calculatePrice(String product) {
+		delay();
+		return random.nextDouble() * product.charAt(0) + product.charAt(1);
+}
+```

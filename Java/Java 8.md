@@ -1618,3 +1618,43 @@ private double calculatePrice(String product) {
 		return random.nextDouble() * product.charAt(0) + product.charAt(1);
 }
 ```
+
+### 할인 서비스 구현
+
+우리의 최저가격 검색 애플리케이션은 여러 상점에서 가격 정보를 얻어오고, 결과 문자열을 파싱하고, 할인 서버에 질의를 보낸다.
+
+상점에서 제공한 문자열 파싱을 다음 Quote 클래스로 캡슐화할 수 있다.
+
+```java
+public class Quote {
+		private final String shopName;
+		private final double price;
+		private final Discount.Code discountCode;
+
+		public Quote(String shopName, double price, Discount.Code code) {
+				this.shopName = shopName;
+				this.price = price;
+				this.discountCode = code;
+		}
+
+		public static Quote parse(String s) {
+				String[] split = s.split(":");
+				String shopName = split[0];
+				double price = Double.parseDouble(split[1]);
+				Discount.Code discountCode = Discount.Code.valueOf(split[2]);
+				return new Quote(shopName, price, discountCode);
+		}
+
+		public String getShopName() {
+				return shopName;
+		}
+
+		public double getPrice() {
+				return price;
+		}
+
+		public Discount.Code getDiscountCode() {
+				return discountCode;
+		}
+}
+```

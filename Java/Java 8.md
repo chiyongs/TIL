@@ -1658,3 +1658,21 @@ public class Quote {
 		}
 }
 ```
+
+이를 토대로 Discount 서비스에서는 Quote 객체를 인수로 받아 할인된 가격 문자열을 반환하는 applyDiscount 메서드를 제공한다.
+
+```java
+public class Discount {
+		...
+
+		public static String applyDiscount(Quote quote) {
+				return quote.getShopName() + " price is " +
+								Discount.apply(quote.getPrice(), quote.getDiscountCode());
+		}
+
+		private static double apply(double price, Code code) {
+				delay(); // Discount 서비스의 응답 지연 흉내
+				return format(price * (100 - code.percentage) / 100);
+		}
+}
+```

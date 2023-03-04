@@ -1676,3 +1676,23 @@ public class Discount {
 		}
 }
 ```
+
+### 할인 서비스 사용
+
+순차적이면서 동기방식의 findPrices 메서드
+
+```java
+public List<String> findPrices(String product) {
+		return shops.stream()
+						.map(shop -> shop.getPrice(product))
+						.map(Quote::parse)
+						.map(Discount::applyDiscount))
+						.collect(toList());
+}
+```
+
+1. 각 상점을 요청한 제품의 가격과 할인 코드로 변환
+2. 이들 문자열을 파싱해서 Quote 객체 생성
+3. 원격 Discount 서비스에 접근해 최종 할인가격을 계산하고 문자열 반환
+
+순차적이고 동기방식의 메서드는 성능 최적화와는 거리가 멀다.

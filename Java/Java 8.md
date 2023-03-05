@@ -1696,3 +1696,22 @@ public List<String> findPrices(String product) {
 3. 원격 Discount 서비스에 접근해 최종 할인가격을 계산하고 문자열 반환
 
 순차적이고 동기방식의 메서드는 성능 최적화와는 거리가 멀다.
+
+### 동기 작업과 비동기 작업 조합하기
+
+CompletableFuture에서 제공하는 기능으로 findPrices 메서드를 비동기적으로 재구현
+
+```java
+public List<String> findPrices(String product) {
+		List<CompletableFuture<String>> priceFutures =
+				shops.stream()
+							.map(shop -> CompletableFuture.supplyAsync(() -> shop.getPrice(product), executor))
+							.map(future -> future.thenApply(Quote::parse))
+							.map(future -> future.thenCompse(quote ->
+																					CompletableFuture.supplyAsync(() -> Discount.applyDiscount(quote), executor)))
+							.collect(toList());
+
+		return priceFutures.stream()
+								.map(CompletableFuture::join)
+								.collect(toList());
+```

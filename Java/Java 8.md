@@ -1715,3 +1715,16 @@ public List<String> findPrices(String product) {
 								.map(CompletableFuture::join)
 								.collect(toList());
 ```
+
+1. 가격 정보 얻기
+   1. supplyAsync에 람다 표현식을 전달해서 비동기로 상점에서 정보를 조회
+   2. 반환 결과 : Stream<CompletableFuture<String>>
+2. Quote 파싱하기
+   1. 첫 번째 결과로 나오는 문자열을 Quote로 변환
+   2. 파싱 동작에는 원격 서비스나 I/O가 없으므로 즉시 지연없이 동작 수행 가능
+   3. 따라서, 가격 정보 얻기 과정에서 생성된 CompletableFuture에 thenApply 메서드를 호출한 후 문자열을 Quote 인스턴스로 변환하는 Function으로 전달
+   4. thenApply 메서드는 CompletableFuture가 끝날 때까지 블록하지 않는다
+   5. CompletableFuture가 동작을 완전히 완료한 다음 thenApply 메서드로 전달된 람다 표현식 적용
+3. CompletableFuture를 조합해서 할인된 가격 계산하기
+   1. 세 번째 map 연산에서는 상점에서 받은 할인전 가격에 원격 Discount 서비스에서 제공하는 할인율 적용
+   2. thenCompose 메서드는 두 CompletableFuture를 조합할 수 있다. 첫 번째 연산의 결과를 두 번째 연산으로 전달한다.

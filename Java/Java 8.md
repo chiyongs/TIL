@@ -1728,3 +1728,11 @@ public List<String> findPrices(String product) {
 3. CompletableFuture를 조합해서 할인된 가격 계산하기
    1. 세 번째 map 연산에서는 상점에서 받은 할인전 가격에 원격 Discount 서비스에서 제공하는 할인율 적용
    2. thenCompose 메서드는 두 CompletableFuture를 조합할 수 있다. 첫 번째 연산의 결과를 두 번째 연산으로 전달한다.
+
+thenCompose 메서드도 Async로 끝나는 버전이 존재한다.
+
+Async로 끝나지 않는 메서드는 이전 작업을 수행한 스레드와 같은 스레드에서 작업이 실행됨을 의미하며 Async로 끝나는 메서드는 다음 작업이 다른 스레드에서 실행되도록 스레드 풀로 작업을 제출한다.
+
+위 작업에서는 두 번째 CompletableFuture의 결과가 첫 번째 CompletableFuture에 의존하므로 async 버전을 사용해도 최종 결과나 개괄적인 실행시간에는 영향을 미치지 않는다.
+
+따라서, 스레드 전환 오버헤드가 적게 발생하면서 효율성이 좀 더 좋은 thenCompose를 사용했다.

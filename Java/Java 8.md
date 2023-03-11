@@ -1736,3 +1736,26 @@ Async로 끝나지 않는 메서드는 이전 작업을 수행한 스레드와 �
 위 작업에서는 두 번째 CompletableFuture의 결과가 첫 번째 CompletableFuture에 의존하므로 async 버전을 사용해도 최종 결과나 개괄적인 실행시간에는 영향을 미치지 않는다.
 
 따라서, 스레드 전환 오버헤드가 적게 발생하면서 효율성이 좀 더 좋은 thenCompose를 사용했다.
+
+## 독립 CompletableFuture와 비독립 CompletableFuture 합치기
+
+thenCombine 메서드
+
+- BiFunction을 두 번째 인수로 받는다.
+- 독립적으로 실행된 두 개의 CompletableFuture 결과를 합쳐야 하는 상황에 사용
+
+예시) 한 온라인 상점이 유로 가격 정보를 제공하는데 고객에게는 항상 달러 가격을 보여줘야 한다.
+
+원격 환율 교환 서비스를 이용해 유로와 달러의 현재 환율을 비동기적으로 요청하여 처리해야 한다.
+
+```java
+Future<Double> futurePriceUSD =
+					CompletableFuture.supplyAsync(() -> shop.getPrice(product))
+					.thenCombine(
+						CompletableFuture.supplyAsync(
+							() -> exchangeService.getRate(Money.EUR, Money.USD)),
+						(price, rate) -> price * rate
+					));
+```
+
+위 합치는 연산은 단순 곱셈이므로 별도의 태스크에서 수행하여 자원을 낭비할 필요가 없어 thenCombineAsync 대신 thenCombine 사용

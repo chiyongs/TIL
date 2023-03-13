@@ -1759,3 +1759,9 @@ Future<Double> futurePriceUSD =
 ```
 
 위 합치는 연산은 단순 곱셈이므로 별도의 태스크에서 수행하여 자원을 낭비할 필요가 없어 thenCombineAsync 대신 thenCombine 사용
+
+## Future의 리플렉션과 CompletableFuture의 리플렉션
+
+CompletableFuture은 람다 표현식을 사용한다.
+
+람다 덕분에 다양한 동기 태스크, 비동기 태스크를 활용한 복잡한 연산 수행 방법을 효과적으로 쉽게 정의할 수 있는 선언형 API를 만들 수 있다.

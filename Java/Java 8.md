@@ -1765,3 +1765,22 @@ Future<Double> futurePriceUSD =
 CompletableFuture은 람다 표현식을 사용한다.
 
 람다 덕분에 다양한 동기 태스크, 비동기 태스크를 활용한 복잡한 연산 수행 방법을 효과적으로 쉽게 정의할 수 있는 선언형 API를 만들 수 있다.
+
+> 자바 7로 두 Future 합치기
+
+```java
+ExecutorService executor = Executors.newCachedThreadPool();
+final Future<Double> futureRate = executor.submit(new Callable<Double>() {
+		public Double call() {
+				return exchangeService.getRate(Money.EUR, Money.USD);
+		}
+});
+Future<Double> futurePriceUSD = executor.submit(new Callable<Double>() {
+		public Double call() {
+				double priceInEUR = shop.getPrice(product);
+				return priceInEUR * futureRate.get();
+		}
+});
+```
+
+위처럼 두 Future를 합칠 수 있지만, 해당 로직으로는 모든 검색 결과가 완료될 때까지 사용자가 기다려야 한다.

@@ -1784,3 +1784,21 @@ Future<Double> futurePriceUSD = executor.submit(new Callable<Double>() {
 ```
 
 위처럼 두 Future를 합칠 수 있지만, 해당 로직으로는 모든 검색 결과가 완료될 때까지 사용자가 기다려야 한다.
+
+## CompletableFuture의 종료에 대응하는 방법
+
+실전의 다양한 원격 서비스들은 예시처럼 1초의 지연만 발생하지 않는다.
+
+따라서, 1초의 지연만 발생하던 예제 delay 대신 0.5~2.5초의 지연이 발생하는 randomDelay 메서드를 사용한다.
+
+```java
+private static final Random random = new Random();
+public static void randomDelay() {
+		int delay = 500 + random.nextInt(2000);
+		try {
+				Thread.sleep(delay);
+		} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+		}
+}
+```

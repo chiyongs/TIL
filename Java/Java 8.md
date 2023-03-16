@@ -1802,3 +1802,34 @@ public static void randomDelay() {
 		}
 }
 ```
+
+## 최저가격 검색 애플리케이션 리팩토링
+
+사용자가 기다리지 않게 하려면 모든 가격 정보를 포함할 때까지 리스트 생성을 기다리지 않도록 수정해야 한다.
+
+```java
+public Stream<CompletableFuture<String>> findPricesStream(String product) {
+		return shops.stream()
+							.map(shop -> CompletableFuture.supplyAsync(
+																			() -> shop.getPrice(product), executor))
+							.map(future -> future.thenApply(Quote::parse))
+							.map(future -> future.thenCompose(quote ->
+											CompletableFuture.supplyAsync(
+													() -> Discount.applyDiscount(quote), executor)));
+}
+```
+
+```java
+findPricesStream("myPhone").map(f -> f.thenAccept(System.out::println));
+```
+
+thenAccept 메서드는 CompletableFuture에 등록된 동작을 수행하고 소비된다.
+
+thenAcceptAsync 메서드도 존재하지만 위 예제에서는 불필요한 컨텍스트 변경이 일어나기 때문에 (새로운 스레드를 이용할 수 있을 때까지 기다려야 하는 상황이 생길 수도 있음)
+
+thenAccept 메서드는 CompletableFuture가 생성한 결과를 어떻게 소비할지 미리 지정했으므로 CompletableFuture<Void>를 반환한다.
+
+### CompletableFuture.allOf, anyOf
+
+- allOf : 전달된 모든 CompletableFuture가 완료되어야 CompletableFuture<Void>가 완성된다.
+- anyOf : 처음으로 완료된 CompletableFuture의 값으로 CompletableFuture<Object>를 완성한다.

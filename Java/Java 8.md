@@ -1833,3 +1833,11 @@ thenAccept 메서드는 CompletableFuture가 생성한 결과를 어떻게 소�
 
 - allOf : 전달된 모든 CompletableFuture가 완료되어야 CompletableFuture<Void>가 완성된다.
 - anyOf : 처음으로 완료된 CompletableFuture의 값으로 CompletableFuture<Object>를 완성한다.
+
+## 요약
+
+- 한 개 이상의 긴 원격 외부 서비스를 사용할 때는 비동기 방식으로 애플리케이션이 성능과 반응성을 향상시킬 수 있다.
+- CompletableFuture을 활용해 비동기 API를 쉽게 구현할 수 있다.
+- 동기 API를 CompletableFuture로 비동기적으로 소비할 수 있다.
+- CompletableFuture에 콜백을 등록해 Future가 동작을 끝내고 결과를 생산했을 때 어떤 코드를 실행하도록 지정할 수 있다.
+- CompletableFuture 리스트의 모든 값이 완료될 때까지 기다릴지 아니면 하나의 값만 완료되길 기다릴지 선택할 수 있다.

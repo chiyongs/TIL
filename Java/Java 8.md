@@ -1929,3 +1929,47 @@ List를 반환하는 메서드를 두 번 호출하면 결과로 같은 요소�
 따라서, 리스트를 반환하는 메서드는 참조적으로 투명한 메서드가 아니라는 결론이 나온다.
 
 일반적으로 함수형 코드에서는 이런 함수를 참조적으로 투명한 것으로 간주한다.
+
+### 함수형 실전 연습
+
+{1, 4, 9} 로 되어 있는 List<Integer> → 모든 부분집합의 멤버로 구성된 List<List<Integer>로 만들기
+
+```java
+static List<List<Integer>> subsets(List<Integer> list) {
+    if (list.isEmpty()) {
+        List<List<Integer>> ans = new ArrayList<>();
+        ans.add(Collections.emptyList());
+        return ans;
+    }
+
+    Integer first = list.get(0);
+    List<Integer> rest = list.subList(1, list.size());
+
+    List<List<Integer>> subans = subsets(rest);
+    List<List<Integer>> subans2 = insertAll(first, subans);
+    return concat(subans, subans2);
+}
+
+static List<List<Integer>> insertAll(Integer first,
+                                     List<List<Integer>> lists) {
+    List<List<Integer>> result = new ArrayList<>();
+    for (List<Integer> list : lists) {
+        List<Integer> copyList = new ArrayList<>();
+        copyList.add(first);
+        copyList.addAll(list);
+        result.add(copyList);
+    }
+    return result;
+}
+
+static List<List<Integer>> concat(List<List<Integer>> a,
+                                  List<List<Integer>> b) {
+    List<List<Integer>> r = new ArrayList<>(a);
+    r.addAll(b);
+    return r;
+}
+```
+
+위 구현한 메서드들은 모두 함수형 메서드이다.
+
+내부적으로 변화가 발생하지만 변환 결과는 오로지 인수에 의해 이루어지며 인수의 정보는 변경하지 않는다.

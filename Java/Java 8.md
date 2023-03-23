@@ -1973,3 +1973,27 @@ static List<List<Integer>> concat(List<List<Integer>> a,
 위 구현한 메서드들은 모두 함수형 메서드이다.
 
 내부적으로 변화가 발생하지만 변환 결과는 오로지 인수에 의해 이루어지며 인수의 정보는 변경하지 않는다.
+
+## 재귀와 반복
+
+순수 함수형 프로그래밍 언어에서는 while, for 같은 반복문을 포함하지 않는다.
+
+이러한 반복문 때문에 변화가 자연스럽게 코드에 스며들 수 있기 때문이다.
+
+함수형 스타일에서는 다른 누군가가 변화를 알아차리지만 못한다면 아무 상관이 없다.
+
+→ 지역 변수는 자유롭게 갱신할 수 있다.
+
+```java
+public void searchForGold(List<String> l, Stats stats) {
+		for(String s : l) {
+				if("gold".equals(s)) {
+						stats.incrementFor("gold");
+				}
+		}
+}
+```
+
+위 루프는 내부에서 프로그램의 다른 부분과 공유되는 stats 객체의 상태를 변화시킨다.
+
+재귀를 이용하면 루프 단계마다 갱신되는 반복 변수를 제거할 수 있다.

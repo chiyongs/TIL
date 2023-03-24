@@ -1997,3 +1997,32 @@ public void searchForGold(List<String> l, Stats stats) {
 위 루프는 내부에서 프로그램의 다른 부분과 공유되는 stats 객체의 상태를 변화시킨다.
 
 재귀를 이용하면 루프 단계마다 갱신되는 반복 변수를 제거할 수 있다.
+
+팩토리얼 코드 예제
+
+```java
+static int factorialIterative(int n) {
+		int r = 1;
+		for (int i=1; i<=n; i++) {
+				r *= i;
+		}
+		return r;
+}
+
+static long factorialRecursive(long n) {
+		return n == 1 ? 1 : n * factorialRecursive(n-1);
+}
+
+static long factorilaStream(long n) {
+		return LongStream.rangeClosed(1, n)
+											.reduce(1, (long a, long b) -> a * b);
+}
+```
+
+하지만, 재귀는 일반적으로 반복 코드보다 더 비싸다.
+
+재귀함수를 호출할 때마다 호출 스택에 각 호출 시 생성되는 정보를 저장할 새로운 스택 프레임이 만들어진다.
+
+→ 재귀 입력값에 비례해서 메모리 사용량이 증가한다.
+
+이처럼 중간 결과를 각각의 스택 프레임에 저장해야 하는 일반 재귀와 달리 꼬리 재귀에서는 컴파일러가 하나의 스택 프레임을 재활용할 가능성이 생긴다.

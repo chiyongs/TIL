@@ -2077,3 +2077,34 @@ static long factorilaStream(long n) {
 함수형 메서드는 전역 자료구조나 인수로 전달된 구조를 갱신할 수 없다.
 
 구조를 바꾸거나 갱신한다면 같은 메서드를 두 번 호출했을 때 결과가 달라지면서 참조 투명성에 위배되고 인수를 결과로 단순하게 매핑할 수 있는 능력이 상실되기 때문이다.
+
+### 파괴적인 갱신과 함수형
+
+A → B까지 기차여행을 의미하는 가변 TrainJourney 클래스
+
+```java
+class TrainJourney {
+		public int price;
+		public TrainJourney onward;
+		public TrainJourney(int p, TrainJourney t) {
+				price = p;
+				onward = t;
+		}
+}
+```
+
+X → Y, Y → Z 까지의 여행을 나타내는 TrainJourney들이 있으면 연결
+
+```java
+static TrainJourney link(TrainJourney a, TrainJourney b) {
+		if (a==null) return b;
+		TrainJourney t = a;
+		while(t.onward != null) {
+				t = t.onward;
+		}
+		t.onward = b;
+		return a;
+}
+```
+
+→ TrainJourney a 의 마지막 여정에 b를 연결한다.

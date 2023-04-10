@@ -2120,3 +2120,9 @@ static TrainJourney link(TrainJourney a, TrainJourney b) {
 계산결과를 표현할 자료구조가 필요하면 기존의 자료구조를 갱신하지 않도록 새로운 자료구조를 만들어야 한다.
 
 → 표준 객체지향 프로그래밍 관점에서도 좋은 기법
+
+```java
+static TrainJourney append(TrainJourney a, TrainJourney b) {
+		return a==null ? b : new TrainJourney(a.price, append(a.onward, b));
+}
+```

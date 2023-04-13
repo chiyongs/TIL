@@ -2180,3 +2180,11 @@ public static Tree fupdate(String k, int newval, Tree t) {
 						new Tree(t.key, t.val, t.left, fupdate(k, newval, t.right);
 }
 ```
+
+> update vs fupdate
+
+update 메서드는 모든 사용자가 같은 자료구조를 공유하며 프로그램에서 누군가 자료구조를 갱신했을 때 영향을 받는다.
+
+비함수형 코드에서는 누군가 언제든 트리를 갱신할 수 있으므로 트리에 어떤 구조체의 값을 추가할 때마다 값을 복사했다.
+
+fupdate는 순수한 함수형이다.

@@ -16,3 +16,9 @@ Java Virtual Machine, 자바 가상 머신으로 자바 바이트 코드(.class)
 Java Runtime Environment, 자바 애플리케이션을 실행할 수 있도록 구성된 배포판이다.
 JVM과 핵심 라이브러리, 프로퍼티 세팅, 리소스 파일들을 가지고 있다.
 개발 툴은 포홤되어 있지 않다.
+
+### JDK
+
+Java Development Kit, JRE + 개발에 필요한 툴이 들어있다.
+소스 코드를 작성할 때 사용하는 자바 언어는 플랫폼에 독립적이다.
+오라클은 자바 11부터 JDK만 제공하고, JRE를 따로 제공하지 않는다.

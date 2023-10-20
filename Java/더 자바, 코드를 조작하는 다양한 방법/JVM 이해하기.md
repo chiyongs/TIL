@@ -86,7 +86,7 @@ JVM은 크게 보면 4가지로 분류할 수 있다.
 
 ### 로딩
 
-- Application ClassLoader → Platform ClassLoader - >Bootstrap ClassLoader
+- Application ClassLoader → Platform ClassLoader -> Bootstrap ClassLoader
   - 클래스 로딩을 진행할 때 자식 클래스 로더에서 먼저 찾아보고 찾지 못한 경우 부모 클래스 로더에게 위임한다.
 - 클래스 로더가 .class 파일을 읽고 그 내용에 따라 적절한 바이너리 데이터를 만들고 “메소드” 영역에 저장
   - 메소드 영역에 저장되는 데이터
@@ -101,3 +101,14 @@ JVM은 크게 보면 4가지로 분류할 수 있다.
   - JAVA_HOME/lib/ext 폴더 또는 java.ext.dirs 시스템 변수에 해당하는 위치에 있는 클래스를 읽는다.
 - 애플리케이션 클래스 로더
   - 애플리케이션 클래스패스(애플리케이션에서 실행할 때 주는 -classpath 옵션 또는 java.class.path 환경 변수 값에 해당하는 위치)에서 클래스를 읽는다.
+
+### 링크
+
+- Verify → Prepare → Resolve(optional) 세 단계로 이루어진다.
+- Verify, 검증
+  - .class 파일 형식이 유효한지 체크한다.
+- Preparation
+  - 클래스 변수(static 변수)와 기본 값에 필요한 메모리를 준비하는 과정
+- Resolve
+  - 심볼릭 메모리 레퍼런스를 “메소드” 영역에 있는 실제 레퍼런스로 교체하는 과정
+    - 심볼릭 메모리 레퍼런스 : 논리적인 레퍼런스

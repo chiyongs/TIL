@@ -30,3 +30,45 @@ SQL로 데이터를 조회할 때 범위에 맞춰 데이터를 가져오게 되
 객체를 객체답게 모델링할 수록 매핑 작업이 늘어남
 → 객체를 자바 컬렉션에 저장하듯이 DB에 저장하는 방법
 → JPA
+
+## JPA
+
+자바 진영의 ORM 기술의 표준
+
+> ORM
+
+Object-Relational Mapping
+
+- 객체는 객체대로 설계하며 관계형 데이터베이스는 관계형 데이터베이스대로 설계
+- ORM 프레임워크가 중간에서 매핑
+
+이점
+→ SQL 중심적인 개발에서 객체 중심으로 개발이 가능
+→ 생산성 및 유지보수성 향상
+→ 데이터 접근 추상화 및 벤더 독립성 등등..
+
+### 생산성
+
+CRUD
+
+- Create : jpa.persist
+- Read : jpa.find
+- Update : entity.setXX
+- Delete : jpa.remove
+
+### 유지보수성
+
+객체 필드 추가 시 SQL 자동 수정
+
+### 성능 최적화
+
+- 1차 캐시와 동일성 보장
+  - 같은 트랜잭션 안에서는 같은 엔티티를 반환 → 약간의 조회 성능 향상
+  - DB Isolation Level : Read Committed 여도 애플리케이션에서 Repeatable Read 보장
+- 트랜잭션을 지원하는 쓰기 지연
+  - 트랜잭션을 커밋할 때까지 Insert SQL을 모으고, JDBC BATCH SQL 기능을 사용해서 한 번에 SQL 전송
+  - Update, Delete로 인한 Row 락 시간 최소화
+  - 트랜잭션 커밋 시 Update, Delete SQL 실행하고 커밋
+- 지연 로딩
+  - 지연 로딩 : 객체가 실제 사용될 때 로딩
+  - 즉시 로딩 : Join SQL로 한 번에 연관된 객체까지 미리 조회

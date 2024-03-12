@@ -157,3 +157,37 @@ JPA에서 가장 중요한 2가지
   - 영속성 컨텍스트 초기화
 - em.close()
   - 영속성 컨텍스트 종료
+
+## 엔티티 매핑
+
+- 객체와 테이블 매핑 시 : `@Entity`, `@Table`
+- 필드와 컬럼 매핑 시 : `@Column`
+- 기본 키 매핑 시 : `@Id`
+- 연관관계 매핑 시 : `@ManyToOne`, `@JoinColumn` …
+
+> `@Entity` 사용시 주의사항
+
+- 기본 생성자 필수
+- final 클래스, enum, interface, inner 클래스 사용 X
+- 저장할 필드에 final 사용 X
+
+### 필드와 컬럼 매핑
+
+- 컬럼 매핑 : `@Column`
+- 날짜 타입 매핑 : `@Temporal`
+- Enum 타입 매핑 : `@Enumerated`
+  - EnumType.ORDINAL 사용 X → Enum 순서를 DB에 저장하기 때문에, Enum 순서 변경 시 데이터가 다 틀어짐
+- BLOB, CLOB 매핑 : `@Lob`
+- 특정 필드를 컬럼에 매핑하지 않음 : `@Transient`
+
+### 기본 키 매핑
+
+- `@Id`
+- `@GeneratedValue`
+  - IDENTITY : 데이터베이스에 위임, MySQL
+  - SEQUENCE : 데이터베이스 시퀀스 오브젝트 사용, Oracle
+    - DB에서 시퀀스 기능을 지원해야만 사용 가능한 전략
+    - `@SequenceGenerator` 필요
+  - TABLE : 키 생성용 테이블 사용, 모든 DB에서 사용 가능
+    - `@TableGenerator` 필요
+  - AUTO : 방언에 따라 자동 지정, 기본 값

@@ -1,4 +1,4 @@
-# HashTable
+# HashTable 간단 정리
 
 ## 개념
 

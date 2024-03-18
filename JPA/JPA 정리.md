@@ -371,3 +371,67 @@ JPQL은 연관관계 데이터를 무시하고 해당하는 엔티티만을 조�
 참조가 제거된 엔티티는 다른 곳에서 참조하지 않는 고아 객체로 판단하여 삭제하는 기능
 → 참조하는 곳이 한 곳이어야 하고, 특정 엔티티가 해당 엔티티를 개인으로 소유할 때 사용
 → `@OneToOne`, `@OneToMany` 만 가능
+
+## 값 타입
+
+### 기본 값 타입
+
+int, String, Integer…
+
+### 임베디드 타입
+
+새로운 값 타입 직접 정의, 주로 기본 값 타입을 모아 만들기 때문에 복합 값 타입이라고도 함
+
+```java
+@Entity
+public class Member {
+  @Id
+  private Long id;
+  private Long name;
+  @Embedded
+  private Period period;
+}
+
+@Embeddable
+public class Period {
+  LocalDateTime start;
+  LocalDateTime end;
+}
+```
+
+기본 생성자가 필수로 필요함
+
+장점
+
+- 재사용
+- 높은 응집도
+- 해당 클래스로 의미 있는 메소드 생성 가능
+- 생명주기를 엔티티에 의존
+
+> 값 타입과 불변 객체
+
+임베디드 타입 같은 직접 정의한 값 타입 : Reference type
+
+→ 복사 시 참조 값이 복사됨
+→ 공유 참조로 인해 부작용 발생할 수 있음
+
+값 타입을 불변 객체로 설계하여 부작용 차단해야 함
+
+### 값 타입 컬렉션
+
+- 하나 이상의 값 타입을 저장할 때 사용
+- 컬렉션 저장을 위한 별도의 테이블이 필요
+
+```java
+@Entity
+public class Member {
+  ...
+  @ElementCollection
+  @CollectionTable(name = "FAVORITE_FOOD", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+  private Set<String> favoriteFoods = new HashSet<>();
+```
+
+값 타입은 엔티티와 다르게 식별자 개념이 없으므로 변경 발생 시 추적이 어렵다.
+상황에 따라 값 타입 컬렉션 대신 일대다 관계를 사용하는 것이 좋다.
+엔티티와 값 타입을 혼동해서 엔티티를 값 타입으로 만들면 안된다.
+식별자가 필요하고, 지속해서 값을 추적, 변경해야 한다면 값 타입이 아닌 엔티티!

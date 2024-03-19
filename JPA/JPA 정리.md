@@ -435,3 +435,50 @@ public class Member {
 상황에 따라 값 타입 컬렉션 대신 일대다 관계를 사용하는 것이 좋다.
 엔티티와 값 타입을 혼동해서 엔티티를 값 타입으로 만들면 안된다.
 식별자가 필요하고, 지속해서 값을 추적, 변경해야 한다면 값 타입이 아닌 엔티티!
+
+## JPA의 다양한 쿼리 방법
+
+- JPQL
+- Criteria
+- QueryDSL
+- Native SQL
+- JDBC API, MyBatis, SpringJdbcTemplate…
+
+### JPQL
+
+JPQL은 테이블이 아닌 엔티티 객체를 대상으로 검색, 특정 DB 벤더에 의존적이지 않음
+
+→ DB의 모든 데이터는 객체로 변환해서 검색하는 것은 불가능
+
+→ 검색 시 필요한 조건이 포함된 SQL이 필요
+
+```java
+String jpql = "select m from Member m where m.name like '%hello%'";
+List<Member> result = em.createQuery(jpql, Member.class).getResultList();
+```
+
+### Criteria
+
+문자열이 아닌 자바로 JPQL을 작성할 수 있으며 JPQL 빌더 역할
+
+너무 복잡하고 실용성이 없음 → QueryDSL 사용 권장
+
+### QueryDSL
+
+문자열이 아닌 자바로 JPQL 작성 및 JPQL 빌더 역할
+
+→ 컴파일 시점에 문법 오류를 찾을 수 있으며 동적 쿼리 작성이 편리함
+
+```java
+JPAFactoryQuery query = new JPAQueryFactory(em);
+QMember m = QMember.member;
+
+List<Member> list = query.selectFrom(m)
+                          .where(m.age.gt(18))
+                          .orderBy(m.name.desc())
+                          .fetch();
+```
+
+### Native SQL
+
+SQL을 직접 사용하는 방법으로 JPQL로 해결할 수 없는 특정 데이터베이스에 의존적인 기능을 위해 사용

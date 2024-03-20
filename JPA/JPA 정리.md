@@ -482,3 +482,22 @@ List<Member> list = query.selectFrom(m)
 ### Native SQL
 
 SQL을 직접 사용하는 방법으로 JPQL로 해결할 수 없는 특정 데이터베이스에 의존적인 기능을 위해 사용
+
+## JPQL 사용법
+
+`select m from Member as m where m.age > 18`
+
+- 엔티티와 속성은 대소문자 구분해야 하고, 키워드는 대소문자를 구분하지 않아도 됨
+- 테이블 이름이 아닌 엔티티 이름을 사용해야 하며, 별칭은 필수이다.
+
+- TypedQuery : 반환 타입이 명확한 경우
+  - `TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);`
+- Query : 반환 타입이 명확하지 않은 경우
+
+  - `Query query = em.createQuery("select m.username, m.age from Member m");`
+
+- query.getResultList() : 결과가 하나 이상인 경우
+  - 결과가 없으면 emptyList 반환
+- query.getSingleResult() : 결과가 정확히 하나인 경우
+  - 결과가 없으면 `javax.persistence.NoResultException`
+  - 결과가 2개 이상이면 `javax.persistence.NonUniqueResultException`

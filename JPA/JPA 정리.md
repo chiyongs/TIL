@@ -513,3 +513,10 @@ select 절에 조회할 대상을 지정하는 것
 - new 명령어로 조회 (단순 값을 Dto로 바로 조회하는 경우)
   - `select new jpabook.jpql.UserDto(m.username, m.age) from Member m`
   - 풀 패키지 정보가 필요하며, 순서와 타입이 일치하는 생성자 필요
+
+### 페이징
+
+- setFirstResult(int startPosition) : 조회 시작 위치
+- setMaxResults(int maxResult) : 조회할 데이터 수
+
+JPA에서는 위 2 API로 페이징을 추상화하여 데이터베이스별로 달라질 수 있는 페이징 쿼리를 개발자가 신경쓰지 않아도 됨

@@ -501,3 +501,15 @@ SQL을 직접 사용하는 방법으로 JPQL로 해결할 수 없는 특정 데�
 - query.getSingleResult() : 결과가 정확히 하나인 경우
   - 결과가 없으면 `javax.persistence.NoResultException`
   - 결과가 2개 이상이면 `javax.persistence.NonUniqueResultException`
+
+### 프로젝션
+
+select 절에 조회할 대상을 지정하는 것
+
+> 여러 값을 조회하는 경우
+
+- Query 타입으로 조회
+- Object[] 타입으로 조회
+- new 명령어로 조회 (단순 값을 Dto로 바로 조회하는 경우)
+  - `select new jpabook.jpql.UserDto(m.username, m.age) from Member m`
+  - 풀 패키지 정보가 필요하며, 순서와 타입이 일치하는 생성자 필요

@@ -520,3 +520,21 @@ select 절에 조회할 대상을 지정하는 것
 - setMaxResults(int maxResult) : 조회할 데이터 수
 
 JPA에서는 위 2 API로 페이징을 추상화하여 데이터베이스별로 달라질 수 있는 페이징 쿼리를 개발자가 신경쓰지 않아도 됨
+
+### 조인
+
+- 내부조인 : `SELECT m FROM Member m INNER JOIN m.team t`
+- 외부조인 : `SELECT m FROM Member m LEFT OUTER JOIN m.team t`
+- 세터조인 : `SELECT m FROM Member m, Team t WHERE m.username = t.name`
+
+### 서브 쿼리
+
+> 서브 쿼리 지원 함수
+
+- [NOT] EXISTS (subquery) : 서브 쿼리 결과가 존재한다면 참
+- ALL | ANY | SOME (subquery)
+- [NOT] IN (subquery) : 서브 쿼리 결과 중 하나라도 같은 것이 있으면 참
+
+JPA에서는 WHERE, HAVING 절에서만 서브 쿼리를 사용할 수 있음
+
+→ FROM 절의 서브 쿼리는 현재 JPQL에서 불가능하므로 조인으로 풀 수 있으면 조인으로 해결

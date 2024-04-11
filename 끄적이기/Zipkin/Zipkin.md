@@ -32,7 +32,7 @@ Collector는 다양한 서비스로부터 Trace 데이터를 수신하는 역할
 
 Collector는 이 데이터를 처리하여 유효성 검사, 저장, 인덱싱 등의 작업을 수행하며, 이를 검색 가능하게 만들어줍니다.
 
-1. Storage
+2. Storage
 
 Zipkin은 trace 데이터를 여러 저장소에 저장할 수 있도록 지원합니다.
 
@@ -44,11 +44,11 @@ Zipkin은 trace 데이터를 여러 저장소에 저장할 수 있도록 지원�
 - 관계형 DB(ex. MySQL)의 경우 소규모 환경에서 사용
 - NoSQL의 경우 Cassandra / ElasticSearch 를 상용 운영 환경에서 사용
 
-1. Query Service
+3. Query Service
 
 Zipkin은 저장된 Trace 데이터를 다룰 수 있도록 API를 제공합니다.
 
-1. Web UI
+4. Web UI
 
 사용자는 서비스 이름, Span ID, 시간 범위 등의 여러 기준으로 Trace를 검색할 수 있습니다.
 

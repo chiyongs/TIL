@@ -3,15 +3,12 @@
 > MSA 환경의 단점
 
 MSA 환경은 여러 서비스들이 서로 네트워크를 통해 소통하며 요청을 처리해나갑니다.
-
 서비스 간 소통을 위한 네트워크 통신으로 인해 에러 트레이싱이 어려워진다는 것이 MSA의 단점입니다.
-
 하지만, 우리는 OpenTracing을 통해 이를 도움받을 수 있습니다.
 
 > OpenTracing이란?
 
 OpenTracing은 분산 추적을 위한 벤더 중립적인 오픈 스탠다드로 개발자들이 어떤 분산 추적 시스템이든 관계없이 애플리케이션에 추적 수집과 조회를 일관된 방식으로 통합할 수 있게 하는 API를 제공합니다.
-
 (마치 JPA가 표준이고, Hibernate가 그의 구현체인 것처럼)
 
 > Zipkin이란?
@@ -27,17 +24,13 @@ Zipkin을 통해 시스템의 Latency 문제와 여러 시스템 간의 네트�
 1. Collector
 
 Collector는 다양한 서비스로부터 Trace 데이터를 수신하는 역할을 합니다.
-
 데이터는 HTTP, Kafka 등의 여러 방식으로 전송될 수 있으며,
-
 Collector는 이 데이터를 처리하여 유효성 검사, 저장, 인덱싱 등의 작업을 수행하며, 이를 검색 가능하게 만들어줍니다.
 
 2. Storage
 
 Zipkin은 trace 데이터를 여러 저장소에 저장할 수 있도록 지원합니다.
-
 (참고, Zipkin은 초기부터 Cassandra를 사용하여 데이터를 저장하는 것으로 만들어졌습니다.)
-
 인메모리 환경, 관계형 DB, NoSQL 등을 사용 가능합니다.
 
 - In-Memory 환경의 경우 간단한 로컬 테스트에 사용
@@ -60,23 +53,49 @@ Zipkin은 저장된 Trace 데이터를 다룰 수 있도록 API를 제공합니�
 
 - Trace : 시스템을 통해 흐르는 하나의 요청을 나타냅니다.
   - Trace ID : 위 Trace에 부여되는 각각의 ID
-- Span : Trace 내의 개별 작업을 말합니다. 시작 및 종료 타임스탬프와 주석, 태그와 같이 자겅ㅂ에 대한 맥락을 제공하는 메타데이터가 포함되어있습니다.
+- Span : Trace 내의 개별 작업을 말합니다. 시작 및 종료 타임스탬프와 Annotations, Tags와 같이 작업에 대한 맥락을 제공하는 메타데이터가 포함되어있습니다.
   - Span ID : 위 Span에 부여되는 각각의 ID
 
 하나의 요청이 다른 시스템으로 이동되면 만들어진 Trace ID와 Span ID를 함께 전달합니다.
-
-Trace ID와 Span ID의 전달은 HTTP 헤더를 통해 이루어집니다.
-
+Trace ID와 Span ID의 전달은 HTTP 헤더를 통해 이루어집니다. (아래에서 더 설명할 예정)
 요청을 처리하는 각 서비스는 자신의 Span을 Trace에 추가하여 Zipkin이 서비스 간의 요청 경로 전체를 재구성할 수 있도록 합니다.
-
 또한, Zipkin은 사용자에게 응답을 제공한 후 **비동기적**으로 추적에 대한 정보를 수집합니다.
+
+> Zipkin의 HTTP 헤더를 통한 추적 정보 전달 방식
+
+```java
+   Client Tracer                                                  Server Tracer
+┌───────────────────────┐                                       ┌───────────────────────┐
+│                       │                                       │                       │
+│   TraceContext        │          Http Request Headers         │   TraceContext        │
+│ ┌───────────────────┐ │         ┌───────────────────┐         │ ┌───────────────────┐ │
+│ │ TraceId           │ │         │ X-B3-TraceId      │         │ │ TraceId           │ │
+│ │                   │ │         │                   │         │ │                   │ │
+│ │ ParentSpanId      │ │ Inject  │ X-B3-ParentSpanId │ Extract │ │ ParentSpanId      │ │
+│ │                   ├─┼────────>│                   ├─────────┼>│                   │ │
+│ │ SpanId            │ │         │ X-B3-SpanId       │         │ │ SpanId            │ │
+│ │                   │ │         │                   │         │ │                   │ │
+│ │ Sampling decision │ │         │ X-B3-Sampled      │         │ │ Sampling decision │ │
+│ └───────────────────┘ │         └───────────────────┘         │ └───────────────────┘ │
+│                       │                                       │                       │
+└───────────────────────┘                                       └───────────────────────┘
+```
+
+Zipkin은 B3-Propagation을 사용합니다. `X-B3-` 으로 명칭하는 HTTP 헤더를 통해 4개 값을 전달하고, 이 4개의 값을 통해 추적 정보를 관리합니다.
+
+- TraceId : 64 또는 128비트이며 하나의 추적에 대한 고유한 ID, 모든 Span은 동일한 TraceId를 공유
+  - TraceId의 HTTP 헤더 Key : X-B3-TraceId
+- SpanId : 64비트, 추적 트리에서 현재 명령에 대한 포지션을 가리킴
+  - SpanId의 HTTP 헤더 Key : X-B3-SpanId
+- ParentSpanId : 64비트, 추적 트리에서 부모 명령에 대한 포지션을 가리킴, 루트라면 이 항목을 가지고 있지 않음
+  - ParentSpanId의 HTTP 헤더 Key : X-B3-ParentSpanId
+
+위 3개를 제외한 Sampling decision에 대해 이해하기 위해서는 Sampling State에 대해 먼저 아는 것이 좋습니다.
 
 > 주의할 점
 
 하지만, 이런 좋은 Zipkin도 고려해야 할 점이 존재합니다!
-
 서비스의 요청들을 추적하고 이를 데이터를 남기는 작업은 결국 추가적인 오버헤드가 발생하게 됩니다.
-
 애플리케이션이 많은 양의 트래픽을 처리하는 경우 높은 샘플링 비율을 사용한다면
 
 - 데이터베이스에 부하가 생기거나,
@@ -84,10 +103,8 @@ Trace ID와 Span ID의 전달은 HTTP 헤더를 통해 이루어집니다.
 - 높은 비율로 샘플링하므로 더 많은 데이터를 전송하게 되어 네트워크에도 부하가 생길 수 있으며 이는 네트워크 지연으로 이어질 수 있습니다.
 
 샘플링의 비율은 0.0~1.0 (0% ~ 100%)로 기본적으로는 0.1로 세팅되어있습니다.
-
 따라서, 시스템의 요구사항과 목표에 맞게 어느정도의 데이터를 샘플링할 것인지도 중요합니다.
-
 초기에는 보수적인 접근으로 시스템 영향도를 낮추고, 필요에 따라 조정하는 것도 좋은 방법일 것 같습니다.
 
-- [ ] Trace ID와 Span ID가 HTTP 헤더에서 어떻게 전달되는지 추가 필요
+- [ ] Sampling State 내용 추가 필요
 - [ ] Spring Cloud Sleuth와 Spring Boot 3에서 Micrometer..

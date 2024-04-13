@@ -92,6 +92,27 @@ Zipkin은 B3-Propagation을 사용합니다. `X-B3-` 으로 명칭하는 HTTP �
 
 위 3개를 제외한 Sampling decision에 대해 이해하기 위해서는 Sampling State에 대해 먼저 아는 것이 좋습니다.
 
+Zipkin에서는 모든 요청을 전부 추적하는 것이 아닌 일부 요청만 샘플링하여 추적할 수 있습니다.
+Sampling State에는 4가지 유효한 상태가 존재합니다.
+
+- Defer : 아직 결정하지 못한 상태
+  - 샘플링을 하지 않고 있는 상태를 의미
+- Deny : 샘플링을 하지 않거나 기록하지 않는 상태
+  - 확률적으로 샘플링이 되지 않거나 특정 요청에 대한 Trace가 생성하는 것을 방지하기 위해 사용
+- Accept : 샘플링하거나 기록하는 상태
+  - 확률적으로 샘플링이 되거나 특정 요청이 항상 추적되도록 하는데 사용
+  - Accept 상태라면 과부하 상황을 제외하고는 Span이 Zipkin에 전달되어야 함
+- Debug : 강제로 추적하는 상태
+  - Debug는 프로덕션의 트러블슈팅 목적으로 사용
+  - 강조된 Accept 상태로, Trace의 각 Span에 대해서 Span.debug = true로 보고됨
+
+Sampling State의 HTTP 헤더 Key
+
+- X-B3-Sampled : 1 → Accept
+- X-B3-Sampled : 0 → Deny
+- 해당 Key가 존재하지 않는 경우 : Defer
+- X-B3-Flags : 1 → Debug
+
 > 주의할 점
 
 하지만, 이런 좋은 Zipkin도 고려해야 할 점이 존재합니다!

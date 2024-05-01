@@ -588,3 +588,12 @@ JPQL은 결과를 반환할 때 연관관계를 고려하지 않고, 단순히 S
 - 페치 조인 대상에는 별칭을 줄 수 없음
 - 둘 이상의 컬렉션은 페치 조인 할 수 없음
 - 컬렉션을 페치 조인하면 페이징 API를 사용할 수 없음
+
+### 다형성 쿼리
+
+- TYPE
+  - 조회 대상을 특정 자식으로 한정
+  - `select i from Item i where type(i) in (Book, Movie)`
+- TREAT
+  - 자바의 타입 캐스팅과 유사, 상속 구조에서 부모 타입을 특정 자식 타입으로 다룰 때 사용
+  - `select i from Item i where treat(i as Book).author = 'kim'`

@@ -59,3 +59,45 @@ class OrderService {
   유지보수 어려움
 - 비즈니스 로직이 여러 서비스 클래스에 분산될 수 있어, 유지보수가 어려워집니다.
 - 로직이 도메인 객체와 함께 캡슐화되지 않으므로 코드의 의미를 이해하기 힘들어집니다.
+
+## 3. 풍부한 도메인 모델(Rich Domain Model)
+
+Fowler는 Anemic Domain Model의 대안으로 Rich Domain Model을 제안합니다. 이는 객체가 데이터와 행동을 함께 가지는 모델입니다.
+
+Rich Domain Model의 특징:
+객체 내부에 비즈니스 로직 포함.
+캡슐화(encapsulation)와 객체 간 책임 분담을 강화.
+객체 스스로가 자신의 상태와 행동을 관리.
+예시:
+
+```java
+class Order {
+    private String orderId;
+    private double totalAmount;
+
+    public Order(String orderId, double totalAmount) {
+        this.orderId = orderId;
+        this.totalAmount = totalAmount;
+    }
+
+    public double calculateDiscount() {
+        if (this.totalAmount > 100) {
+            return this.totalAmount * 0.1;
+        }
+        return 0;
+    }
+}
+```
+
+여기서는 Order 객체가 자신이 가진 데이터를 기반으로 할 수 있는 행동(calculateDiscount)을 스스로 처리합니다.
+
+## 4. Rich Domain Model의 장점
+
+1. 캡슐화 강화
+   객체가 자신의 데이터를 보호하며, 로직과 데이터를 한곳에 모아 응집도가 높아집니다.
+
+2. 서비스 계층 간소화
+   서비스 계층이 비즈니스 로직을 직접 처리하지 않고, 도메인 객체에 위임합니다. 이를 통해 서비스 클래스는 더 작고 간단해집니다.
+
+3. 코드의 가독성과 유지보수성 향상
+   로직이 객체 내부에 위치하므로, 도메인 객체를 읽는 것만으로 비즈니스 로직을 이해할 수 있습니다. 로직이 분산되지 않아 코드 탐색이 쉬워집니다.
